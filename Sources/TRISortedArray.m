@@ -293,31 +293,32 @@
 #pragma mark Comparing
 
 
-- (NSUInteger)hash {
+- (NSUInteger)hash TRI_PUBLIC_API {
     return self.backing.hash ^ self.sortDescriptors.hash;
 }
 
 
-- (BOOL)isEqualTo:(id)other {
+- (BOOL)isEqualTo:(id)other TRI_PUBLIC_API {
     if (self == other) return YES;
     if ( ! [other isKindOfClass:[NSArray class]]) return NO;
     return [self.backing isEqualToArray:other];
 }
 
 
-- (BOOL)isEqualToArray:(NSArray *)other {
+- (BOOL)isEqualToArray:(NSArray *)other TRI_PUBLIC_API {
     if (self == other) return YES;
     return [self.backing isEqualToArray:other];
 }
 
 
-- (BOOL)isEqualToSortedArray:(TRISortedArray *)other {
+- (BOOL)isEqualToSortedArray:(TRISortedArray *)other TRI_PUBLIC_API {
     return ([self isEqualToArray:other]
-            && [self.sortDescriptors isEqualToArray:other.sortDescriptors]);
+            && [self.sortDescriptors isEqualToArray:other.sortDescriptors]
+            && self.insertsEqualObjectsFirst == other.insertsEqualObjectsFirst);
 }
 
 
-- (id)firstObjectCommonWithArray:(NSArray *)other {
+- (id)firstObjectCommonWithArray:(NSArray *)other TRI_PUBLIC_API {
     return [self.backing firstObjectCommonWithArray:other];
 }
 
@@ -554,6 +555,8 @@
 - (instancetype)mutableCopy TRI_PUBLIC_API {
     TRISortedArray *copy = [[self.class alloc] initWithBacking:[self.backing mutableCopy]];
     copy.sortDescriptors = self.sortDescriptors;
+    copy.allowsConcurrentSorting = self.allowsConcurrentSorting;
+    copy.insertsEqualObjectsFirst = self.insertsEqualObjectsFirst;
     return copy;
 }
 

@@ -72,6 +72,12 @@
 - (instancetype)mutableCopy;
 
 
+#pragma mark - Comparing
+
+- (BOOL)isEqualTo:(NSArray *)array;
+- (BOOL)isEqualToSortedArray:(TRISortedArray *)sortedArray;
+
+
 #pragma mark - Observing Changes
 
 - (void)addObserver:(id<TRISortedArrayObserver>)observer;
