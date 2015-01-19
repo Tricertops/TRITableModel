@@ -36,10 +36,9 @@
 
 #pragma mark - Adding Objects
 
+- (NSUInteger)proposedIndexOfObject:(id)object;
 - (void)addObject:(id)object;
 - (void)addObjectsFromCollection:(id<NSFastEnumeration>)collection;
-- (NSUInteger)proposedIndexOfObject:(id)object;
-- (NSIndexSet *)proposedIndexesOfObjectsInCollection:(id<NSFastEnumeration>)collection;
 
 
 #pragma mark - Removing Objects
@@ -64,6 +63,7 @@
 @property (copy) NSArray *sortDescriptors;
 @property (readonly) BOOL isAutonomous;
 @property (readonly, copy) NSSet *observedKeyPaths;
+//TODO: @property BOOL isDescending;
 @property BOOL allowsConcurrentSorting;
 @property BOOL insertsEqualObjectsFirst;
 

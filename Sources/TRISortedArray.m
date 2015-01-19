@@ -170,15 +170,9 @@
 
 - (void)addObjectsFromCollection:(NSObject<NSFastEnumeration> *)collection TRI_PUBLIC_API {
     NSMutableArray *backing = self.backing;
-    if ([collection isKindOfClass:[NSArray class]]) {
-        NSIndexSet *indexes = [self proposedIndexesOfObjectsInCollection:collection];
-        [backing insertObjects:(NSArray *)collection atIndexes:indexes];
-    }
-    else {
-        for (NSObject *object in collection) {
-            NSUInteger index = [self proposedIndexOfObject:object];
-            [backing insertObject:object atIndex:index];
-        }
+    for (NSObject *object in collection) {
+        NSUInteger index = [self proposedIndexOfObject:object];
+        [backing insertObject:object atIndex:index];
     }
 }
 
@@ -197,24 +191,6 @@
     else {
         return backing.count;
     }
-}
-
-
-- (NSIndexSet *)proposedIndexesOfObjectsInCollection:(NSObject<NSFastEnumeration> *)collection TRI_PUBLIC_API {
-    // These indexes are good only for inserting those object one after another.
-    NSMutableIndexSet *independentIdexes = [NSMutableIndexSet new];
-    for (NSObject *object in collection) {
-        NSUInteger index = [self proposedIndexOfObject:object];
-        [independentIdexes addIndex:index];
-    }
-    // These indexes are shifted by previous inserts, so these can then be used for adding multiple objects at once.
-    NSMutableIndexSet *shiftedIndexes = [NSMutableIndexSet new];
-    __block NSUInteger shift = 0;
-    [independentIdexes enumerateIndexesUsingBlock:^(NSUInteger index, __unused BOOL *stop) {
-        [shiftedIndexes addIndex:(index + shift)];
-        shift ++;
-    }];
-    return shiftedIndexes;
 }
 
 
@@ -255,13 +231,8 @@
 
 - (void)removeObjectsInCollection:(NSObject<NSFastEnumeration> *)collection TRI_PUBLIC_API {
     NSMutableArray *backing = self.backing;
-    if ([collection isKindOfClass:[NSArray class]]) {
-        [backing removeObjectsInArray:(NSArray *)collection];
-    }
-    else {
-        for (NSObject *object in collection) {
-            [backing removeObject:object];
-        }
+    for (NSObject *object in collection) {
+        [backing removeObject:object];
     }
 }
 
@@ -407,7 +378,7 @@
 }
 
 
-- (void)sortObjectsInCollection:(id<NSFastEnumeration>)collection TRI_PUBLIC_API {
+- (void)sortObjectsInCollection:(NSObject<NSFastEnumeration> *)collection TRI_PUBLIC_API {
     NSMutableArray *backing = self.backing;
     // Find only those that are actually contained.
     NSMutableArray *subcollection = [NSMutableArray new];
