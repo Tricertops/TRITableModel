@@ -53,17 +53,17 @@
 - (void)removeObjectsInCollection:(id<NSFastEnumeration>)collection;
 
 
+#pragma mark - Filtering Objects
+
+- (void)filterUsingPredicate:(NSPredicate *)predicate;
+- (void)filterUsingBlock:(BOOL (^)(id object, NSUInteger index))block;
+
+
 #pragma mark - Resorting Objects
 
 - (void)resortObject:(id)object;
 - (void)resortObjectsInCollection:(id<NSFastEnumeration>)collection;
 - (void)resort;
-
-
-#pragma mark - Filtering Objects
-
-- (void)filterUsingPredicate:(NSPredicate *)predicate;
-- (void)filterUsingBlock:(BOOL (^)(id object, NSUInteger index))block;
 
 
 #pragma mark - Copying

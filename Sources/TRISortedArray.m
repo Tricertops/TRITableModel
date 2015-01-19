@@ -315,6 +315,30 @@
 
 
 
+#pragma mark - Filtering Objects
+
+
+- (void)filterUsingPredicate:(NSPredicate *)predicate {
+    [self.backing filterUsingPredicate:predicate];
+}
+
+
+- (void)filterUsingBlock:(BOOL (^)(id, NSUInteger))shouldKeep {
+    NSUInteger index = 0;
+    NSMutableArray *backing = self.backing;
+    for (NSObject *object in [backing copy]) {
+        if ( ! shouldKeep(object, index)) {
+            [backing removeObjectAtIndex:index];
+        }
+        index ++;
+    }
+}
+
+
+
+
+
+
 
 
 
