@@ -26,6 +26,10 @@
 
 @property (readonly) NSMutableArray *backing;
 
+@property (copy) NSComparator combinedComparator;
+@property BOOL isAutonomous;
+@property (copy) NSSet *observedKeyPaths;
+
 
 - (instancetype)initWithCoder:(NSCoder *)decoder NS_DESIGNATED_INITIALIZER;
 
@@ -145,6 +149,67 @@
 }
 
 
+
+
+
+#pragma mark -
+#pragma mark Managing Sorting
+
+
+@synthesize sortDescriptors = _sortDescriptors;
+
+
+- (NSArray *)sortDescriptors TRI_PUBLIC_API {
+    return self->_sortDescriptors;
+}
+
+
+- (void)setSortDescriptors:(NSArray *)sortDescriptors TRI_PUBLIC_API {
+    sortDescriptors = [sortDescriptors copy];
+    self->_sortDescriptors = sortDescriptors;
+    
+    if (sortDescriptors.count > 0) {
+        NSUInteger missingKeyPaths = NSUIntegerMax;
+        NSSet *keyPaths = [self keyPathsFromSortDescriptors:sortDescriptors countMissing:&missingKeyPaths];
+        self.isAutonomous = (missingKeyPaths == 0);
+        self.observedKeyPaths = keyPaths;
+        //TODO: Observe key-paths
+        
+        [self setCombinedComparator:^NSComparisonResult(id objectA, id objectB) {
+            for (NSSortDescriptor *descriptor in sortDescriptors) {
+                NSComparisonResult result = [descriptor compareObject:objectA toObject:objectB];
+                if (result != NSOrderedSame)
+                    return result;
+            }
+            return NSOrderedSame;
+        }];
+        [self resort];
+    }
+    else {
+        self.combinedComparator = nil;
+        self.isAutonomous = NO;
+        self.observedKeyPaths = nil;
+        //TODO: Un-observe key-paths
+    }
+}
+
+
+- (NSSet *)keyPathsFromSortDescriptors:(NSArray *)sortDescriptors countMissing:(out NSUInteger *)missingCountRef {
+    NSMutableSet *keyPaths = [NSMutableSet setWithCapacity:sortDescriptors.count];
+    NSUInteger missing = 0;
+    for (NSSortDescriptor *descriptor in sortDescriptors) {
+        if (descriptor.key) {
+            [keyPaths addObject:descriptor.key];
+        }
+        else {
+            missing ++;
+        }
+    }
+    if (missingCountRef) {
+        *missingCountRef = missing;
+    }
+    return keyPaths;
+}
 
 
 
