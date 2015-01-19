@@ -49,7 +49,7 @@
 
 
 
-#pragma mark Creating
+#pragma mark Initializers: Designated
 
 
 - (instancetype)initWithCapacity:(NSUInteger)capacity TRI_PUBLIC_API {
@@ -72,6 +72,12 @@
     }
     return self;
 }
+
+
+
+
+
+#pragma mark Initializers: Convenience
 
 
 /// Used by convenience initializers that already have NSMutableArray instance that can be used directly.
@@ -98,194 +104,6 @@
     }
     return self;
 }
-
-
-- (instancetype)initWithObjects:(const id [])objects count:(NSUInteger)count TRI_PUBLIC_API {
-    NSMutableArray *mutable = [[NSMutableArray alloc] initWithObjects:objects count:count];
-    return [self initWithBacking:mutable];
-}
-
-
-//! The following methods already return correct subclass, see tests.
-/*
- + (instancetype)array;
- + (instancetype)arrayWithObject:(id)anObject;
- + (instancetype)arrayWithObjects:(id)firstObj, ... NS_REQUIRES_NIL_TERMINATION;
- + (instancetype)arrayWithObjects:(const id [])objects count:(NSUInteger)cnt;
- + (instancetype)arrayWithArray:(NSArray *)array;
- - (instancetype)initWithObjects:(id)firstObj, ... NS_REQUIRES_NIL_TERMINATION;
- - (instancetype)initWithArray:(NSArray *)array;
- - (instancetype)initWithArray:(NSArray *)array copyItems:(BOOL)flag;
- */
-
-
-+ (instancetype)arrayWithContentsOfFile:(NSString *)path TRI_PUBLIC_API {
-    NSMutableArray *mutable = [NSMutableArray arrayWithContentsOfFile:path];
-    return [[self alloc] initWithBacking:mutable];
-}
-
-
-+ (instancetype)arrayWithContentsOfURL:(NSURL *)URL TRI_PUBLIC_API {
-    NSMutableArray *mutable = [NSMutableArray arrayWithContentsOfURL:URL];
-    return [[self alloc] initWithBacking:mutable];
-}
-
-
-- (instancetype)initWithContentsOfFile:(NSString *)path TRI_PUBLIC_API {
-    NSMutableArray *mutable = [[NSMutableArray alloc] initWithContentsOfFile:path];
-    return [self initWithBacking:mutable];
-}
-
-
-- (instancetype)initWithContentsOfURL:(NSURL *)URL TRI_PUBLIC_API {
-    NSMutableArray *mutable = [[NSMutableArray alloc] initWithContentsOfURL:URL];
-    return [self initWithBacking:mutable];
-}
-
-
-
-
-
-#pragma mark -
-#pragma mark Querying
-
-
-- (NSUInteger)count TRI_PUBLIC_API {
-    return self.backing.count;
-}
-
-
-- (BOOL)containsObject:(NSObject *)object TRI_PUBLIC_API {
-    return [self.backing containsObject:object];
-}
-
-
-- (id)firstObject TRI_PUBLIC_API {
-    return self.backing.firstObject;
-}
-
-
-- (id)lastObject TRI_PUBLIC_API {
-    return self.backing.lastObject;
-}
-
-
-- (id)objectAtIndex:(NSUInteger)index TRI_PUBLIC_API {
-    return [self.backing objectAtIndex:index];
-}
-
-
-- (id)objectAtIndexedSubscript:(NSUInteger)index TRI_PUBLIC_API {
-    return [self.backing objectAtIndexedSubscript:index];
-}
-
-
-- (NSArray *)objectsAtIndexes:(NSIndexSet *)indexes TRI_PUBLIC_API {
-    return [self.backing objectsAtIndexes:indexes];
-}
-
-
-- (void)getObjects:(__unsafe_unretained id [])objects range:(NSRange)range TRI_PUBLIC_API {
-    [self.backing getObjects:objects range:range];
-}
-
-
-- (NSEnumerator *)objectEnumerator TRI_PUBLIC_API {
-    return [self.backing objectEnumerator];
-}
-
-
-- (NSEnumerator *)reverseObjectEnumerator TRI_PUBLIC_API {
-    return [self.backing reverseObjectEnumerator];
-}
-
-
-
-
-
-#pragma mark Finding
-
-
-- (NSUInteger)indexOfObject:(NSObject *)object TRI_PUBLIC_API {
-    return [self.backing indexOfObject:object];
-}
-
-
-- (NSUInteger)indexOfObject:(NSObject *)object inRange:(NSRange)range TRI_PUBLIC_API {
-    return [self.backing indexOfObject:object inRange:range];
-}
-
-
-- (NSUInteger)indexOfObjectIdenticalTo:(NSObject *)object TRI_PUBLIC_API {
-    return [self.backing indexOfObjectIdenticalTo:object];
-}
-
-
-- (NSUInteger)indexOfObjectIdenticalTo:(NSObject *)object inRange:(NSRange)range TRI_PUBLIC_API {
-    return [self.backing indexOfObjectIdenticalTo:object inRange:range];
-}
-
-
-- (NSUInteger)indexOfObjectPassingTest:(BOOL (^)(id, NSUInteger, BOOL *))predicate TRI_PUBLIC_API {
-    return [self.backing indexOfObjectPassingTest:predicate];
-}
-
-
-- (NSUInteger)indexOfObjectWithOptions:(NSEnumerationOptions)options passingTest:(BOOL (^)(id, NSUInteger, BOOL *))predicate TRI_PUBLIC_API {
-    return [self.backing indexOfObjectWithOptions:options passingTest:predicate];
-}
-
-
-- (NSIndexSet *)indexesOfObjectsPassingTest:(BOOL (^)(id, NSUInteger, BOOL *))predicate TRI_PUBLIC_API {
-    return [self.backing indexesOfObjectsPassingTest:predicate];
-}
-
-
-- (NSIndexSet *)indexesOfObjectsWithOptions:(NSEnumerationOptions)options passingTest:(BOOL (^)(id, NSUInteger, BOOL *))predicate TRI_PUBLIC_API {
-    return [self.backing indexesOfObjectsWithOptions:options passingTest:predicate];
-}
-
-
-- (NSIndexSet *)indexesOfObjectsAtIndexes:(NSIndexSet *)indexes options:(NSEnumerationOptions)options passingTest:(BOOL (^)(id, NSUInteger, BOOL *))predicate TRI_PUBLIC_API {
-    return [self.backing indexesOfObjectsAtIndexes:indexes options:options passingTest:predicate];
-}
-
-
-- (NSUInteger)indexOfObject:(NSObject *)object inSortedRange:(NSRange)range options:(NSBinarySearchingOptions)options usingComparator:(NSComparator)comparator TRI_PUBLIC_API {
-    return [self.backing indexOfObject:object inSortedRange:range options:options usingComparator:comparator];
-}
-
-
-
-
-
-#pragma mark Enumerating
-
-
-- (void)makeObjectsPerformSelector:(SEL)selector TRI_PUBLIC_API {
-    [self.backing makeObjectsPerformSelector:selector];
-}
-
-
-- (void)makeObjectsPerformSelector:(SEL)selector withObject:(NSObject *)argument TRI_PUBLIC_API {
-    [self.backing makeObjectsPerformSelector:selector withObject:argument];
-}
-
-
-- (void)enumerateObjectsUsingBlock:(void (^)(id, NSUInteger, BOOL *))block TRI_PUBLIC_API {
-    [self.backing enumerateObjectsUsingBlock:block];
-}
-
-
-- (void)enumerateObjectsWithOptions:(NSEnumerationOptions)options usingBlock:(void (^)(id, NSUInteger, BOOL *))block TRI_PUBLIC_API {
-    [self.backing enumerateObjectsWithOptions:options usingBlock:block];
-}
-
-
-- (void)enumerateObjectsAtIndexes:(NSIndexSet *)indexes options:(NSEnumerationOptions)options usingBlock:(void (^)(id, NSUInteger, BOOL *))block TRI_PUBLIC_API {
-    [self.backing enumerateObjectsAtIndexes:indexes options:options usingBlock:block];
-}
-
 
 
 
@@ -318,67 +136,13 @@
 }
 
 
-- (id)firstObjectCommonWithArray:(NSArray *)other TRI_PUBLIC_API {
-    return [self.backing firstObjectCommonWithArray:other];
-}
-
-
-
-
-
-#pragma mark Deriving
-
-
-- (NSArray *)copy TRI_PUBLIC_API {
-    return [self.backing copy];
-}
-
-
-- (NSArray *)copyWithZone:(NSZone *)zone {
-    return [self.backing copyWithZone:zone];
-}
-
-
-- (NSMutableArray *)mutableCopy TRI_PUBLIC_API {
-    return [self.backing mutableCopy];
-}
-
-
-- (NSMutableArray *)mutableCopyWithZone:(NSZone *)zone {
-    return [self.backing mutableCopyWithZone:zone];
-}
-
-
-- (NSArray *)arrayByAddingObjectsFromArray:(NSArray *)other TRI_PUBLIC_API {
-    return [self.backing arrayByAddingObjectsFromArray:other];
-}
-
-
-- (NSArray *)subarrayFromIndex:(NSUInteger)firstIncludedIndex TRI_PUBLIC_API {
-    NSMutableArray *backing = self.backing;
-    NSParameterAssert(firstIncludedIndex < backing.count);
-    NSUInteger count = backing.count - firstIncludedIndex;
-    return [backing subarrayWithRange:NSMakeRange(firstIncludedIndex, count)];
-}
-
-
-- (NSArray *)subarrayToIndex:(NSUInteger)firstNotIncludedIndex TRI_PUBLIC_API {
-    NSMutableArray *backing = self.backing;
-    NSParameterAssert(firstNotIncludedIndex <= backing.count);
-    return [backing subarrayWithRange:NSMakeRange(0, firstNotIncludedIndex)];
-}
-
-
-- (NSArray *)subarrayWithRange:(NSRange)range TRI_PUBLIC_API {
-    return [self subarrayWithRange:range];
-}
-
-
 
 
 
 #pragma mark -
-#pragma mark Adding
+
+
+#pragma mark Mutations: Adding
 
 
 - (void)addObject:(NSObject *)object TRI_PUBLIC_API {
@@ -440,7 +204,7 @@
 
 
 
-#pragma mark Removing
+#pragma mark Mutations: Removing
 
 
 - (void)removeAllObjects TRI_PUBLIC_API {
@@ -488,7 +252,7 @@
 
 
 
-#pragma mark Filtering
+#pragma mark Mutations: Filtering
 
 
 - (void)filterUsingPredicate:(NSPredicate *)predicate TRI_PUBLIC_API {
@@ -508,46 +272,10 @@
 }
 
 
-- (NSArray *)filteredArrayUsingPredicate:(NSPredicate *)predicate TRI_PUBLIC_API {
-    return [self.backing filteredArrayUsingPredicate:predicate];
-}
 
 
 
-
-
-#pragma mark -
-#pragma mark Sorting
-
-
-- (NSData *)sortedArrayHint {
-    return [self.backing sortedArrayHint];
-}
-
-
-- (NSArray *)sortedArrayUsingFunction:(NSInteger (*)(__strong id, __strong id, void *))comparator context:(void *)context {
-    return [self.backing sortedArrayUsingFunction:comparator context:context];
-}
-
-
-- (NSArray *)sortedArrayUsingFunction:(NSInteger (*)(__strong id, __strong id, void *))comparator context:(void *)context hint:(NSData *)hint {
-    return [self.backing sortedArrayUsingFunction:comparator context:context hint:hint];
-}
-
-
-- (NSArray *)sortedArrayUsingDescriptors:(NSArray *)sortDescriptors {
-    return [self sortedArrayUsingDescriptors:sortDescriptors];
-}
-
-
-- (NSArray *)sortedArrayUsingComparator:(NSComparator)comparator {
-    return [self sortedArrayUsingComparator:comparator];
-}
-
-
-- (NSArray *)sortedArrayWithOptions:(NSSortOptions)options usingComparator:(NSComparator)comparator {
-    return [self sortedArrayWithOptions:options usingComparator:comparator];
-}
+#pragma mark Mutations: Sorting
 
 
 @synthesize sortDescriptors = _sortDescriptors;
@@ -555,6 +283,7 @@
 
 - (NSArray *)sortDescriptors TRI_PUBLIC_API {
     if ( ! self->_sortDescriptors) {
+        // Never nil, set to empty array.
         self->_sortDescriptors = @[];
     }
     return self->_sortDescriptors;
@@ -679,7 +408,307 @@
 
 
 #pragma mark -
-#pragma mark Description
+
+
+#pragma mark NSArray: Creating
+
+
+- (instancetype)initWithObjects:(const id [])objects count:(NSUInteger)count TRI_PUBLIC_API {
+    NSMutableArray *mutable = [[NSMutableArray alloc] initWithObjects:objects count:count];
+    return [self initWithBacking:mutable];
+}
+
+
+- (instancetype)initWithContentsOfURL:(NSURL *)URL TRI_PUBLIC_API {
+    NSMutableArray *mutable = [[NSMutableArray alloc] initWithContentsOfURL:URL];
+    return [self initWithBacking:mutable];
+}
+
+
+- (instancetype)initWithContentsOfFile:(NSString *)path TRI_PUBLIC_API {
+    return [self initWithContentsOfURL:[NSURL fileURLWithPath:path]];
+}
+
+
++ (instancetype)arrayWithContentsOfURL:(NSURL *)URL TRI_PUBLIC_API {
+    return [[self alloc] initWithContentsOfURL:URL];
+}
+
+
++ (instancetype)arrayWithContentsOfFile:(NSString *)path TRI_PUBLIC_API {
+    return [[self alloc] initWithContentsOfFile:path];
+}
+
+
+//! The following methods already return correct subclass, see tests.
+/*
+ + (instancetype)array;
+ + (instancetype)arrayWithObject:(id)anObject;
+ + (instancetype)arrayWithObjects:(id)firstObj, ... NS_REQUIRES_NIL_TERMINATION;
+ + (instancetype)arrayWithObjects:(const id [])objects count:(NSUInteger)cnt;
+ + (instancetype)arrayWithArray:(NSArray *)array;
+ - (instancetype)initWithObjects:(id)firstObj, ... NS_REQUIRES_NIL_TERMINATION;
+ - (instancetype)initWithArray:(NSArray *)array;
+ - (instancetype)initWithArray:(NSArray *)array copyItems:(BOOL)flag;
+ */
+
+
+
+
+
+#pragma mark NSArray: Querying
+
+
+- (NSUInteger)count TRI_PUBLIC_API {
+    return self.backing.count;
+}
+
+
+- (BOOL)containsObject:(NSObject *)object TRI_PUBLIC_API {
+    return [self.backing containsObject:object];
+}
+
+
+- (id)firstObject TRI_PUBLIC_API {
+    return self.backing.firstObject;
+}
+
+
+- (id)lastObject TRI_PUBLIC_API {
+    return self.backing.lastObject;
+}
+
+
+- (id)objectAtIndex:(NSUInteger)index TRI_PUBLIC_API {
+    return [self.backing objectAtIndex:index];
+}
+
+
+- (id)objectAtIndexedSubscript:(NSUInteger)index TRI_PUBLIC_API {
+    return [self.backing objectAtIndexedSubscript:index];
+}
+
+
+- (NSArray *)objectsAtIndexes:(NSIndexSet *)indexes TRI_PUBLIC_API {
+    return [self.backing objectsAtIndexes:indexes];
+}
+
+
+- (void)getObjects:(__unsafe_unretained id [])objects range:(NSRange)range TRI_PUBLIC_API {
+    [self.backing getObjects:objects range:range];
+}
+
+
+- (NSEnumerator *)objectEnumerator TRI_PUBLIC_API {
+    return [self.backing objectEnumerator];
+}
+
+
+- (NSEnumerator *)reverseObjectEnumerator TRI_PUBLIC_API {
+    return [self.backing reverseObjectEnumerator];
+}
+
+
+
+
+
+#pragma mark NSArray: Finding
+
+
+- (NSUInteger)indexOfObject:(NSObject *)object TRI_PUBLIC_API {
+    return [self.backing indexOfObject:object];
+}
+
+
+- (NSUInteger)indexOfObject:(NSObject *)object inRange:(NSRange)range TRI_PUBLIC_API {
+    return [self.backing indexOfObject:object inRange:range];
+}
+
+
+- (NSUInteger)indexOfObjectIdenticalTo:(NSObject *)object TRI_PUBLIC_API {
+    return [self.backing indexOfObjectIdenticalTo:object];
+}
+
+
+- (NSUInteger)indexOfObjectIdenticalTo:(NSObject *)object inRange:(NSRange)range TRI_PUBLIC_API {
+    return [self.backing indexOfObjectIdenticalTo:object inRange:range];
+}
+
+
+- (NSUInteger)indexOfObjectPassingTest:(BOOL (^)(id, NSUInteger, BOOL *))predicate TRI_PUBLIC_API {
+    return [self.backing indexOfObjectPassingTest:predicate];
+}
+
+
+- (NSUInteger)indexOfObjectWithOptions:(NSEnumerationOptions)options passingTest:(BOOL (^)(id, NSUInteger, BOOL *))predicate TRI_PUBLIC_API {
+    return [self.backing indexOfObjectWithOptions:options passingTest:predicate];
+}
+
+
+- (NSIndexSet *)indexesOfObjectsPassingTest:(BOOL (^)(id, NSUInteger, BOOL *))predicate TRI_PUBLIC_API {
+    return [self.backing indexesOfObjectsPassingTest:predicate];
+}
+
+
+- (NSIndexSet *)indexesOfObjectsWithOptions:(NSEnumerationOptions)options passingTest:(BOOL (^)(id, NSUInteger, BOOL *))predicate TRI_PUBLIC_API {
+    return [self.backing indexesOfObjectsWithOptions:options passingTest:predicate];
+}
+
+
+- (NSIndexSet *)indexesOfObjectsAtIndexes:(NSIndexSet *)indexes options:(NSEnumerationOptions)options passingTest:(BOOL (^)(id, NSUInteger, BOOL *))predicate TRI_PUBLIC_API {
+    return [self.backing indexesOfObjectsAtIndexes:indexes options:options passingTest:predicate];
+}
+
+
+- (NSUInteger)indexOfObject:(NSObject *)object inSortedRange:(NSRange)range options:(NSBinarySearchingOptions)options usingComparator:(NSComparator)comparator TRI_PUBLIC_API {
+    return [self.backing indexOfObject:object inSortedRange:range options:options usingComparator:comparator];
+}
+
+
+- (id)firstObjectCommonWithArray:(NSArray *)other TRI_PUBLIC_API {
+    return [self.backing firstObjectCommonWithArray:other];
+}
+
+
+- (NSArray *)pathsMatchingExtensions:(NSArray *)filterTypes {
+    return [self.backing pathsMatchingExtensions:filterTypes];
+}
+
+
+
+
+
+#pragma mark NSArray: Enumerating
+
+
+- (void)makeObjectsPerformSelector:(SEL)selector TRI_PUBLIC_API {
+    [self.backing makeObjectsPerformSelector:selector];
+}
+
+
+- (void)makeObjectsPerformSelector:(SEL)selector withObject:(NSObject *)argument TRI_PUBLIC_API {
+    [self.backing makeObjectsPerformSelector:selector withObject:argument];
+}
+
+
+- (void)enumerateObjectsUsingBlock:(void (^)(id, NSUInteger, BOOL *))block TRI_PUBLIC_API {
+    [self.backing enumerateObjectsUsingBlock:block];
+}
+
+
+- (void)enumerateObjectsWithOptions:(NSEnumerationOptions)options usingBlock:(void (^)(id, NSUInteger, BOOL *))block TRI_PUBLIC_API {
+    [self.backing enumerateObjectsWithOptions:options usingBlock:block];
+}
+
+
+- (void)enumerateObjectsAtIndexes:(NSIndexSet *)indexes options:(NSEnumerationOptions)options usingBlock:(void (^)(id, NSUInteger, BOOL *))block TRI_PUBLIC_API {
+    [self.backing enumerateObjectsAtIndexes:indexes options:options usingBlock:block];
+}
+
+
+
+
+
+#pragma mark NSArray: Copying
+
+
+- (NSArray *)copy TRI_PUBLIC_API {
+    return [self.backing copy];
+}
+
+
+- (NSArray *)copyWithZone:(NSZone *)zone TRI_PUBLIC_API {
+    return [self.backing copyWithZone:zone];
+}
+
+
+- (NSMutableArray *)mutableCopy TRI_PUBLIC_API {
+    return [self.backing mutableCopy];
+}
+
+
+- (NSMutableArray *)mutableCopyWithZone:(NSZone *)zone TRI_PUBLIC_API {
+    return [self.backing mutableCopyWithZone:zone];
+}
+
+
+
+
+
+#pragma mark NSArray: Deriving
+
+
+- (NSArray *)arrayByAddingObjectsFromArray:(NSArray *)other TRI_PUBLIC_API {
+    return [self.backing arrayByAddingObjectsFromArray:other];
+}
+
+
+- (NSArray *)subarrayWithRange:(NSRange)range TRI_PUBLIC_API {
+    return [self.backing subarrayWithRange:range];
+}
+
+
+- (NSArray *)filteredArrayUsingPredicate:(NSPredicate *)predicate TRI_PUBLIC_API {
+    return [self.backing filteredArrayUsingPredicate:predicate];
+}
+
+
+
+
+
+#pragma mark NSArray: Sorting
+
+
+- (NSData *)sortedArrayHint {
+    return [self.backing sortedArrayHint];
+}
+
+
+- (NSArray *)sortedArrayUsingFunction:(NSInteger (*)(__strong id, __strong id, void *))comparator context:(void *)context {
+    return [self.backing sortedArrayUsingFunction:comparator context:context];
+}
+
+
+- (NSArray *)sortedArrayUsingFunction:(NSInteger (*)(__strong id, __strong id, void *))comparator context:(void *)context hint:(NSData *)hint {
+    return [self.backing sortedArrayUsingFunction:comparator context:context hint:hint];
+}
+
+
+- (NSArray *)sortedArrayUsingDescriptors:(NSArray *)sortDescriptors {
+    return [self.backing sortedArrayUsingDescriptors:sortDescriptors];
+}
+
+
+- (NSArray *)sortedArrayUsingComparator:(NSComparator)comparator {
+    return [self.backing sortedArrayUsingComparator:comparator];
+}
+
+
+- (NSArray *)sortedArrayWithOptions:(NSSortOptions)options usingComparator:(NSComparator)comparator {
+    return [self.backing sortedArrayWithOptions:options usingComparator:comparator];
+}
+
+
+
+
+
+#pragma mark NSArray: Key-Value Coding
+
+
+- (id)valueForKey:(NSString *)key {
+    return [self.backing valueForKey:key];
+}
+
+
+- (void)setValue:(id)value forKey:(NSString *)key {
+    [self.backing setValue:value forKey:key];
+}
+
+
+
+
+
+#pragma mark NSArray: Describing
 
 
 - (NSString *)description {
@@ -707,6 +736,12 @@
 }
 
 
+
+
+
+#pragma mark NSArray: Serializing
+
+
 - (BOOL)writeToFile:(NSString *)path atomically:(BOOL)useAuxiliaryFile {
     return [self.backing writeToFile:path atomically:useAuxiliaryFile];
 }
@@ -715,42 +750,6 @@
 - (BOOL)writeToURL:(NSURL *)URL atomically:(BOOL)atomically {
     return [self.backing writeToURL:URL atomically:atomically];
 }
-
-
-- (NSArray *)pathsMatchingExtensions:(NSArray *)filterTypes {
-    return [self.backing pathsMatchingExtensions:filterTypes];
-}
-
-
-- (id)valueForKey:(NSString *)key {
-    return [self.backing valueForKey:key];
-}
-
-
-- (void)setValue:(id)value forKey:(NSString *)key {
-    [self.backing setValue:value forKey:key];
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

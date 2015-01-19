@@ -19,11 +19,19 @@
 @interface TRISortedArray : NSArray <NSMutableCopying>
 
 
-#pragma mark - Creating Sorted Array
+#pragma mark - Creating Array
 
 - (instancetype)init;
 - (instancetype)initWithCapacity:(NSUInteger)capacity NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithArray:(NSArray *)array sortDescriptor:(NSArray *)sortDescriptors;
+
+
+#pragma mark - Deserializing Array
+
+- (instancetype)initWithContentsOfURL:(NSURL *)URL;
+- (instancetype)initWithContentsOfFile:(NSString *)path;
++ (instancetype)arrayWithContentsOfURL:(NSURL *)URL;
++ (instancetype)arrayWithContentsOfFile:(NSString *)path;
 
 
 #pragma mark - Adding Objects
@@ -68,25 +76,19 @@
 - (void)sortObjectsInCollection:(id<NSFastEnumeration>)collection;
 
 
-#pragma mark - Deriving New Arrays
+#pragma mark - Copying
 
 - (NSArray *)copy;
 - (NSMutableArray *)mutableCopy;
-
-- (NSArray *)subarrayFromIndex:(NSUInteger)firstIncludedIndex;
-- (NSArray *)subarrayToIndex:(NSUInteger)firstNotIncludedIndex;
+- (TRISortedArray *)sortedCopy;
 
 
 #pragma mark - Comparing
 
-- (BOOL)isEqualTo:(NSArray *)array;
-- (BOOL)isEqualToSortedArray:(TRISortedArray *)sortedArray;
+- (BOOL)isEqualTo:(NSArray *)other;
+- (BOOL)isEqualToArray:(NSArray *)other;
+- (BOOL)isEqualToSortedArray:(TRISortedArray *)other;
 
-
-#pragma mark - Observing Changes
-
-- (void)addObserver:(id<TRISortedArrayObserver>)observer;
-- (void)removeObserver:(id<TRISortedArrayObserver>)observer;
 
 
 @end
