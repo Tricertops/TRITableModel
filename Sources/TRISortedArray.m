@@ -326,6 +326,51 @@
 
 
 
+#pragma mark Deriving
+
+
+- (NSArray *)copy TRI_PUBLIC_API {
+    return [self.backing copy];
+}
+
+
+- (instancetype)mutableCopy TRI_PUBLIC_API {
+    TRISortedArray *copy = [[self.class alloc] initWithBacking:[self.backing mutableCopy]];
+    copy.sortDescriptors = self.sortDescriptors;
+    copy.allowsConcurrentSorting = self.allowsConcurrentSorting;
+    copy.insertsEqualObjectsFirst = self.insertsEqualObjectsFirst;
+    return copy;
+}
+
+
+- (NSArray *)arrayByAddingObjectsFromArray:(NSArray *)other TRI_PUBLIC_API {
+    return [self.backing arrayByAddingObjectsFromArray:other];
+}
+
+
+- (NSArray *)subarrayFromIndex:(NSUInteger)firstIncludedIndex TRI_PUBLIC_API {
+    NSMutableArray *backing = self.backing;
+    NSParameterAssert(firstIncludedIndex < backing.count);
+    NSUInteger count = backing.count - firstIncludedIndex;
+    return [backing subarrayWithRange:NSMakeRange(firstIncludedIndex, count)];
+}
+
+
+- (NSArray *)subarrayToIndex:(NSUInteger)firstNotIncludedIndex TRI_PUBLIC_API {
+    NSMutableArray *backing = self.backing;
+    NSParameterAssert(firstNotIncludedIndex <= backing.count);
+    return [backing subarrayWithRange:NSMakeRange(0, firstNotIncludedIndex)];
+}
+
+
+- (NSArray *)subarrayWithRange:(NSRange)range TRI_PUBLIC_API {
+    return [self subarrayWithRange:range];
+}
+
+
+
+
+
 #pragma mark -
 #pragma mark Managing Sorting
 
@@ -543,22 +588,6 @@
 
 
 
-
-#pragma mark - Copying
-
-
-- (NSArray *)copy TRI_PUBLIC_API {
-    return [self.backing copy];
-}
-
-
-- (instancetype)mutableCopy TRI_PUBLIC_API {
-    TRISortedArray *copy = [[self.class alloc] initWithBacking:[self.backing mutableCopy]];
-    copy.sortDescriptors = self.sortDescriptors;
-    copy.allowsConcurrentSorting = self.allowsConcurrentSorting;
-    copy.insertsEqualObjectsFirst = self.insertsEqualObjectsFirst;
-    return copy;
-}
 
 
 

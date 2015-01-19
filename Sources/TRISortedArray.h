@@ -66,10 +66,13 @@
 - (void)resort;
 
 
-#pragma mark - Copying
+#pragma mark - Deriving New Arrays
 
 - (NSArray *)copy;
 - (instancetype)mutableCopy;
+
+- (NSArray *)subarrayFromIndex:(NSUInteger)firstIncludedIndex;
+- (NSArray *)subarrayToIndex:(NSUInteger)firstNotIncludedIndex;
 
 
 #pragma mark - Comparing
