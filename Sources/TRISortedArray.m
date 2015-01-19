@@ -147,6 +147,119 @@
 
 
 #pragma mark -
+#pragma mark Querying
+
+
+- (NSUInteger)count TRI_PUBLIC_API {
+    return self.backing.count;
+}
+
+
+- (BOOL)containsObject:(NSObject *)object TRI_PUBLIC_API {
+    return [self.backing containsObject:object];
+}
+
+
+- (id)firstObject TRI_PUBLIC_API {
+    return self.backing.firstObject;
+}
+
+
+- (id)lastObject TRI_PUBLIC_API {
+    return self.backing.lastObject;
+}
+
+
+- (id)objectAtIndex:(NSUInteger)index TRI_PUBLIC_API {
+    return [self.backing objectAtIndex:index];
+}
+
+
+- (id)objectAtIndexedSubscript:(NSUInteger)index TRI_PUBLIC_API {
+    return [self.backing objectAtIndexedSubscript:index];
+}
+
+
+- (NSArray *)objectsAtIndexes:(NSIndexSet *)indexes TRI_PUBLIC_API {
+    return [self.backing objectsAtIndexes:indexes];
+}
+
+
+- (void)getObjects:(__unsafe_unretained id [])objects range:(NSRange)range TRI_PUBLIC_API {
+    [self.backing getObjects:objects range:range];
+}
+
+
+- (NSEnumerator *)objectEnumerator TRI_PUBLIC_API {
+    return [self.backing objectEnumerator];
+}
+
+
+- (NSEnumerator *)reverseObjectEnumerator TRI_PUBLIC_API {
+    return [self.backing reverseObjectEnumerator];
+}
+
+
+
+
+
+#pragma mark Finding
+
+
+- (NSUInteger)indexOfObject:(NSObject *)object TRI_PUBLIC_API {
+    return [self.backing indexOfObject:object];
+}
+
+
+- (NSUInteger)indexOfObject:(NSObject *)object inRange:(NSRange)range TRI_PUBLIC_API {
+    return [self.backing indexOfObject:object inRange:range];
+}
+
+
+- (NSUInteger)indexOfObjectIdenticalTo:(NSObject *)object TRI_PUBLIC_API {
+    return [self.backing indexOfObjectIdenticalTo:object];
+}
+
+
+- (NSUInteger)indexOfObjectIdenticalTo:(NSObject *)object inRange:(NSRange)range TRI_PUBLIC_API {
+    return [self.backing indexOfObjectIdenticalTo:object inRange:range];
+}
+
+
+- (NSUInteger)indexOfObjectPassingTest:(BOOL (^)(id, NSUInteger, BOOL *))predicate TRI_PUBLIC_API {
+    return [self.backing indexOfObjectPassingTest:predicate];
+}
+
+
+- (NSUInteger)indexOfObjectWithOptions:(NSEnumerationOptions)options passingTest:(BOOL (^)(id, NSUInteger, BOOL *))predicate TRI_PUBLIC_API {
+    return [self.backing indexOfObjectWithOptions:options passingTest:predicate];
+}
+
+
+- (NSIndexSet *)indexesOfObjectsPassingTest:(BOOL (^)(id, NSUInteger, BOOL *))predicate TRI_PUBLIC_API {
+    return [self.backing indexesOfObjectsPassingTest:predicate];
+}
+
+
+- (NSIndexSet *)indexesOfObjectsWithOptions:(NSEnumerationOptions)options passingTest:(BOOL (^)(id, NSUInteger, BOOL *))predicate TRI_PUBLIC_API {
+    return [self.backing indexesOfObjectsWithOptions:options passingTest:predicate];
+}
+
+
+- (NSIndexSet *)indexesOfObjectsAtIndexes:(NSIndexSet *)indexes options:(NSEnumerationOptions)options passingTest:(BOOL (^)(id, NSUInteger, BOOL *))predicate TRI_PUBLIC_API {
+    return [self.backing indexesOfObjectsAtIndexes:indexes options:options passingTest:predicate];
+}
+
+
+- (NSUInteger)indexOfObject:(NSObject *)object inSortedRange:(NSRange)range options:(NSBinarySearchingOptions)options usingComparator:(NSComparator)comparator TRI_PUBLIC_API {
+    return [self.backing indexOfObject:object inSortedRange:range options:options usingComparator:comparator];
+}
+
+
+
+
+
+#pragma mark -
 #pragma mark Managing Sorting
 
 
@@ -269,7 +382,6 @@
 
 
 
-#pragma mark -
 #pragma mark - Removing Objects
 
 
@@ -309,7 +421,7 @@
 
 
 
-#pragma mark - Filtering Objects
+#pragma mark Filtering Objects
 
 
 - (void)filterUsingPredicate:(NSPredicate *)predicate TRI_PUBLIC_API {
@@ -332,7 +444,7 @@
 
 
 
-#pragma mark - Resorting Objects
+#pragma mark Resorting Objects
 
 
 - (void)resortObject:(id)object TRI_PUBLIC_API {
