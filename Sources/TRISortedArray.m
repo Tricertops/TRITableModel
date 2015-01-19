@@ -259,6 +259,67 @@
 
 
 
+#pragma mark Enumerating
+
+
+- (void)makeObjectsPerformSelector:(SEL)selector TRI_PUBLIC_API {
+    [self.backing makeObjectsPerformSelector:selector];
+}
+
+
+- (void)makeObjectsPerformSelector:(SEL)selector withObject:(NSObject *)argument TRI_PUBLIC_API {
+    [self.backing makeObjectsPerformSelector:selector withObject:argument];
+}
+
+
+- (void)enumerateObjectsUsingBlock:(void (^)(id, NSUInteger, BOOL *))block TRI_PUBLIC_API {
+    [self.backing enumerateObjectsUsingBlock:block];
+}
+
+
+- (void)enumerateObjectsWithOptions:(NSEnumerationOptions)options usingBlock:(void (^)(id, NSUInteger, BOOL *))block TRI_PUBLIC_API {
+    [self.backing enumerateObjectsWithOptions:options usingBlock:block];
+}
+
+
+- (void)enumerateObjectsAtIndexes:(NSIndexSet *)indexes options:(NSEnumerationOptions)options usingBlock:(void (^)(id, NSUInteger, BOOL *))block TRI_PUBLIC_API {
+    [self.backing enumerateObjectsAtIndexes:indexes options:options usingBlock:block];
+}
+
+
+
+
+
+#pragma mark Comparing
+
+
+- (BOOL)isEqualTo:(id)other {
+    if (self == other) return YES;
+    if ( ! [other isKindOfClass:[NSArray class]]) return NO;
+    return [self.backing isEqualToArray:other];
+}
+
+
+- (BOOL)isEqualToArray:(NSArray *)other {
+    if (self == other) return YES;
+    return [self.backing isEqualToArray:other];
+}
+
+
+- (BOOL)isEqualToSortedArray:(TRISortedArray *)other {
+    return ([self isEqualToArray:other]
+            && [self.sortDescriptors isEqualToArray:other.sortDescriptors]);
+}
+
+
+- (id)firstObjectCommonWithArray:(NSArray *)other {
+    return [self.backing firstObjectCommonWithArray:other];
+}
+
+
+
+
+
 #pragma mark -
 #pragma mark Managing Sorting
 
@@ -267,6 +328,9 @@
 
 
 - (NSArray *)sortDescriptors TRI_PUBLIC_API {
+    if ( ! self->_sortDescriptors) {
+        self->_sortDescriptors = @[];
+    }
     return self->_sortDescriptors;
 }
 
