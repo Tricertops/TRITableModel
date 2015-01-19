@@ -172,6 +172,9 @@
         NSUInteger missingKeyPaths = NSUIntegerMax;
         NSSet *keyPaths = [self keyPathsFromSortDescriptors:sortDescriptors countMissing:&missingKeyPaths];
         self.isAutonomous = (missingKeyPaths == 0);
+        if ( ! self.isAutonomous) {
+            NSLog(@"<%@ %p> is NOT autonomous and cannot fully resort itself based on KVO, use NSSortDescriptors with defined `key` to allow autonomous resorting.", self.class, self);
+        }
         self.observedKeyPaths = keyPaths;
         //TODO: Observe key-paths
         
@@ -210,6 +213,104 @@
     }
     return keyPaths;
 }
+
+
+
+
+
+#pragma mark -
+#pragma mark Adding Objects
+
+
+- (void)addObject:(NSObject *)object TRI_PUBLIC_API {
+    NSUInteger index = [self proposedIndexOfObject:object];
+    [self.backing insertObject:object atIndex:index];
+}
+
+
+- (void)addObjectsFromCollection:(id<NSFastEnumeration>)collection TRI_PUBLIC_API {
+    for (NSObject *object in collection) {
+        [self addObject:object];
+    }
+}
+
+
+- (NSUInteger)proposedIndexOfObject:(NSObject *)object TRI_PUBLIC_API {
+    NSMutableArray *backing = self.backing;
+    NSComparator comparator = self.combinedComparator;
+    if (comparator) {
+        NSRange range = NSMakeRange(0, backing.count);
+        NSBinarySearchingOptions options = NSBinarySearchingInsertionIndex;
+        options |= (self.insertsEqualObjectsFirst
+                    ? NSBinarySearchingFirstEqual
+                    : NSBinarySearchingLastEqual);
+        return [backing indexOfObject:object inSortedRange:range options:options usingComparator:comparator];
+    }
+    else {
+        return backing.count;
+    }
+}
+
+
+- (NSIndexSet *)proposedIndexesOfObjectsInCollection:(id<NSFastEnumeration>)collection TRI_PUBLIC_API {
+    // These indexes are good only for inserting those object one after another.
+    NSMutableIndexSet *independentIdexes = [NSMutableIndexSet new];
+    for (NSObject *object in collection) {
+        NSUInteger index = [self proposedIndexOfObject:object];
+        [independentIdexes addIndex:index];
+    }
+    // These indexes are shifted by previous inserts, so these can then be used for adding multiple objects at once.
+    NSMutableIndexSet *shiftedIndexes = [NSMutableIndexSet new];
+    __block NSUInteger shift = 0;
+    [independentIdexes enumerateIndexesUsingBlock:^(NSUInteger index, __unused BOOL *stop) {
+        [shiftedIndexes addIndex:(index + shift)];
+        shift ++;
+    }];
+    return shiftedIndexes;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
