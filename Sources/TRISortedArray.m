@@ -293,6 +293,11 @@
 #pragma mark Comparing
 
 
+- (NSUInteger)hash {
+    return self.backing.hash ^ self.sortDescriptors.hash;
+}
+
+
 - (BOOL)isEqualTo:(id)other {
     if (self == other) return YES;
     if ( ! [other isKindOfClass:[NSArray class]]) return NO;
