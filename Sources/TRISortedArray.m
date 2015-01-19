@@ -334,12 +334,18 @@
 }
 
 
-- (instancetype)mutableCopy TRI_PUBLIC_API {
-    TRISortedArray *copy = [[self.class alloc] initWithBacking:[self.backing mutableCopy]];
-    copy.sortDescriptors = self.sortDescriptors;
-    copy.allowsConcurrentSorting = self.allowsConcurrentSorting;
-    copy.insertsEqualObjectsFirst = self.insertsEqualObjectsFirst;
-    return copy;
+- (NSArray *)copyWithZone:(NSZone *)zone {
+    return [self.backing copyWithZone:zone];
+}
+
+
+- (NSMutableArray *)mutableCopy TRI_PUBLIC_API {
+    return [self.backing mutableCopy];
+}
+
+
+- (NSMutableArray *)mutableCopyWithZone:(NSZone *)zone {
+    return [self.backing mutableCopyWithZone:zone];
 }
 
 
@@ -666,6 +672,63 @@
     }
     [self removeObjectsInCollection:subcollection];
     [self addObjectsFromCollection:subcollection];
+}
+
+
+
+
+
+#pragma mark -
+#pragma mark Description
+
+
+- (NSString *)description {
+    return [self.backing description];
+}
+
+
+- (NSString *)descriptionWithLocale:(id)locale {
+    return [self.backing descriptionWithLocale:locale];
+}
+
+
+- (NSString *)descriptionWithLocale:(id)locale indent:(NSUInteger)level {
+    return [self.backing descriptionWithLocale:locale indent:level];
+}
+
+
+- (NSString *)debugDescription {
+    return [self.backing debugDescription];
+}
+
+
+- (NSString *)componentsJoinedByString:(NSString *)separator {
+    return [self.backing componentsJoinedByString:separator];
+}
+
+
+- (BOOL)writeToFile:(NSString *)path atomically:(BOOL)useAuxiliaryFile {
+    return [self.backing writeToFile:path atomically:useAuxiliaryFile];
+}
+
+
+- (BOOL)writeToURL:(NSURL *)URL atomically:(BOOL)atomically {
+    return [self.backing writeToURL:URL atomically:atomically];
+}
+
+
+- (NSArray *)pathsMatchingExtensions:(NSArray *)filterTypes {
+    return [self.backing pathsMatchingExtensions:filterTypes];
+}
+
+
+- (id)valueForKey:(NSString *)key {
+    return [self.backing valueForKey:key];
+}
+
+
+- (void)setValue:(id)value forKey:(NSString *)key {
+    [self.backing setValue:value forKey:key];
 }
 
 
