@@ -7,12 +7,10 @@
 //
 
 @import Foundation;
-
-
-
-@protocol TRISortedArrayObserver;
-//TODO: The Observer protocol
+#import "TRISortedArrayObserver.h"
 //TODO: Create custom Typed interface.
+
+
 
 
 
@@ -39,6 +37,7 @@
 - (NSUInteger)proposedIndexOfObject:(id)object;
 - (void)addObject:(id)object;
 - (void)addObjectsFromCollection:(id<NSFastEnumeration>)collection;
+@property BOOL insertsEqualObjectsFirst;
 
 
 #pragma mark - Removing Objects
@@ -65,7 +64,6 @@
 @property (readonly, copy) NSSet *observedKeyPaths;
 //TODO: @property BOOL isDescending;
 @property BOOL allowsConcurrentSorting;
-@property BOOL insertsEqualObjectsFirst;
 
 - (void)sortAllObjects;
 - (void)sortObject:(id)object;
@@ -88,6 +86,14 @@
 - (BOOL)isEqualTo:(NSArray *)other;
 - (BOOL)isEqualToArray:(NSArray *)other;
 - (BOOL)isEqualToSortedArray:(TRISortedArray *)other;
+
+
+#pragma mark - Observing
+
+- (void)addObserver:(id<TRISortedArrayObserver>)observer;
+- (void)removeObserver:(id<TRISortedArrayObserver>)observer;
+- (void)addSubscriber:(id)subscriber block:(TRISortedArraySubscribtionBlock)block;
+- (void)removeSubscriber:(id)subscriber;
 
 
 
