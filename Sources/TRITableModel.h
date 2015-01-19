@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Triceratops. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+@import Foundation;
 
 //! Project version number for TRITableModel.
 FOUNDATION_EXPORT double TRITableModelVersionNumber;
