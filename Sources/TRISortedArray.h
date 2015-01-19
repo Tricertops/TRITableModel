@@ -22,13 +22,14 @@
 #pragma mark - Creating Sorted Array
 
 - (instancetype)init;
-- (instancetype)initWithCapacity:(NSUInteger)capacity;
+- (instancetype)initWithCapacity:(NSUInteger)capacity NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithArray:(NSArray *)array sortDescriptor:(NSArray *)sortDescriptors;
 
 
 #pragma mark - Defining Sort Descriptors
 
 @property NSArray *sortDescriptors;
+//TODO: BOOL allowsConcurrentSorting
 
 
 #pragma mark - Adding Objects
