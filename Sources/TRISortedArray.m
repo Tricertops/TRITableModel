@@ -49,7 +49,7 @@
 
 
 
-#pragma mark Initializers: Designated
+#pragma mark Initializing
 
 
 - (instancetype)initWithCapacity:(NSUInteger)capacity TRI_PUBLIC_API {
@@ -60,24 +60,6 @@
     }
     return self;
 }
-
-
-- (instancetype)initWithCoder:(NSCoder *)decoder {
-    self = [super initWithCoder:decoder];
-    if (self) {
-        self->_sortDescriptors = [decoder decodeObjectOfClass:[NSArray class] forKey:@"sortDescriptors"];
-        [self->_sortDescriptors makeObjectsPerformSelector:@selector(allowEvaluation)];
-        
-        self->_backing = [decoder decodeObjectOfClass:[NSMutableArray class] forKey:@"objects"];
-    }
-    return self;
-}
-
-
-
-
-
-#pragma mark Initializers: Convenience
 
 
 /// Used by convenience initializers that already have NSMutableArray instance that can be used directly.
@@ -104,6 +86,41 @@
     }
     return self;
 }
+
+
+- (TRISortedArray *)sortedCopy {
+    TRISortedArray *copy = [[self.class alloc] initWithBacking:[self.backing mutableCopy]];
+    copy.sortDescriptors = self.sortDescriptors;
+    copy.allowsConcurrentSorting = self.allowsConcurrentSorting;
+    copy.insertsEqualObjectsFirst = self.insertsEqualObjectsFirst;
+    return copy;
+}
+
+
+
+
+
+#pragma mark Coding
+
+
+- (instancetype)initWithCoder:(NSCoder *)decoder {
+    self = [super initWithCoder:decoder];
+    if (self) {
+        self->_sortDescriptors = [decoder decodeObjectOfClass:[NSArray class] forKey:@"TRI.sortDescriptors"];
+        [self->_sortDescriptors makeObjectsPerformSelector:@selector(allowEvaluation)];
+        
+        self->_backing = [decoder decodeObjectOfClass:[NSMutableArray class] forKey:@"TRI.objects"];
+    }
+    return self;
+}
+
+
+- (void)encodeWithCoder:(NSCoder *)encoder {
+    [super encodeWithCoder:encoder];
+    [encoder encodeObject:self.sortDescriptors forKey:@"TRI.sortDescriptors"];
+    [encoder encodeObject:self.backing forKey:@"TRI.objects"];
+}
+
 
 
 
