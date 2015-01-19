@@ -15,5 +15,6 @@ FOUNDATION_EXPORT double TRITableModelVersionNumber;
 FOUNDATION_EXPORT const unsigned char TRITableModelVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <TRITableModel/PublicHeader.h>
+#import "TRISortedArray.h"
 
 

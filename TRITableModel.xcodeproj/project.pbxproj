@@ -8,9 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		5B0E66341A6D187D00B64B6E /* TRITableModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B0E66281A6D187D00B64B6E /* TRITableModel.framework */; };
-		5B0E66471A6D18D700B64B6E /* TRITableModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B0E66461A6D18D700B64B6E /* TRITableModel.h */; };
+		5B0E66471A6D18D700B64B6E /* TRITableModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B0E66461A6D18D700B64B6E /* TRITableModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B0E664C1A6D18E400B64B6E /* TRITableModelTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0E664A1A6D18E400B64B6E /* TRITableModelTests.m */; };
-		5B0E664F1A6D1BCB00B64B6E /* TRISortedArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B0E664D1A6D1BCB00B64B6E /* TRISortedArray.h */; };
+		5B0E664F1A6D1BCB00B64B6E /* TRISortedArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B0E664D1A6D1BCB00B64B6E /* TRISortedArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B0E66501A6D1BCB00B64B6E /* TRISortedArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0E664E1A6D1BCB00B64B6E /* TRISortedArray.m */; };
 /* End PBXBuildFile section */
 
