@@ -107,20 +107,28 @@
 }
 
 
-//TEST: Class of return value: + (instancetype)array;
-//TEST: Class of return value: + (instancetype)arrayWithObject:(id)anObject;
-//TEST: Class of return value: + (instancetype)arrayWithObjects:(const id [])objects count:(NSUInteger)cnt;
-//TEST: Class of return value: + (instancetype)arrayWithObjects:(id)firstObj, ... NS_REQUIRES_NIL_TERMINATION;
-//TEST: Class of return value: + (instancetype)arrayWithArray:(NSArray *)array;
++ (instancetype)arrayWithContentsOfFile:(NSString *)path {
+    NSMutableArray *mutable = [NSMutableArray arrayWithContentsOfFile:path];
+    return [[self alloc] initWithMutableObjects:mutable];
+}
 
-//TEST: Class of return value: - (instancetype)initWithObjects:(id)firstObj, ... NS_REQUIRES_NIL_TERMINATION;
-//TEST: Class of return value: - (instancetype)initWithArray:(NSArray *)array;
-//TEST: Class of return value: - (instancetype)initWithArray:(NSArray *)array copyItems:(BOOL)flag;
 
-//TEST: Class of return value: + (NSArray *)arrayWithContentsOfFile:(NSString *)path;
-//TEST: Class of return value: + (NSArray *)arrayWithContentsOfURL:(NSURL *)url;
-//TEST: Class of return value: - (NSArray *)initWithContentsOfFile:(NSString *)path;
-//TEST: Class of return value: - (NSArray *)initWithContentsOfURL:(NSURL *)url;
++ (instancetype)arrayWithContentsOfURL:(NSURL *)URL {
+    NSMutableArray *mutable = [NSMutableArray arrayWithContentsOfURL:URL];
+    return [[self alloc] initWithMutableObjects:mutable];
+}
+
+
+- (instancetype)initWithContentsOfFile:(NSString *)path {
+    NSMutableArray *mutable = [[NSMutableArray alloc] initWithContentsOfFile:path];
+    return [self initWithMutableObjects:mutable];
+}
+
+
+- (instancetype)initWithContentsOfURL:(NSURL *)URL {
+    NSMutableArray *mutable = [[NSMutableArray alloc] initWithContentsOfURL:URL];
+    return [self initWithMutableObjects:mutable];
+}
 
 
 
