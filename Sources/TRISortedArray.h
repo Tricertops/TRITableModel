@@ -69,7 +69,7 @@
 #pragma mark - Copying
 
 - (NSArray *)copy;
-- (TRISortedArray *)mutableCopy;
+- (instancetype)mutableCopy;
 
 
 #pragma mark - Observing Changes

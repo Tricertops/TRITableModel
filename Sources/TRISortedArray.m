@@ -368,19 +368,19 @@
 
 
 
+#pragma mark - Copying
 
 
+- (NSArray *)copy {
+    return [self.backing copy];
+}
 
 
-
-
-
-
-
-
-
-
-
+- (instancetype)mutableCopy {
+    TRISortedArray *copy = [[self.class alloc] initWithBacking:[self.backing mutableCopy]];
+    copy.sortDescriptors = self.sortDescriptors;
+    return copy;
+}
 
 
 
