@@ -26,15 +26,6 @@
 - (instancetype)initWithArray:(NSArray *)array sortDescriptor:(NSArray *)sortDescriptors;
 
 
-#pragma mark - Managing Sorting
-
-@property (copy) NSArray *sortDescriptors;
-@property (readonly) BOOL isAutonomous;
-@property (readonly, copy) NSSet *observedKeyPaths;
-@property BOOL allowsConcurrentSorting;
-@property BOOL insertsEqualObjectsFirst;
-
-
 #pragma mark - Adding Objects
 
 - (void)addObject:(id)object;
@@ -50,6 +41,7 @@
 - (void)removeObjectIdenticalTo:(id)object;
 - (void)removeObjectAtIndex:(NSUInteger)index;
 - (void)removeObjectsAtIndexes:(NSIndexSet *)indexes;
+- (void)removeObjectsInRange:(NSRange)range;
 - (void)removeObjectsInCollection:(id<NSFastEnumeration>)collection;
 
 
@@ -58,12 +50,24 @@
 - (void)filterUsingPredicate:(NSPredicate *)predicate;
 - (void)filterUsingBlock:(BOOL (^)(id object, NSUInteger index))block;
 
+- (NSArray *)filteredArrayUsingPredicate:(NSPredicate *)predicate;
 
-#pragma mark - Resorting Objects
 
-- (void)resortObject:(id)object;
-- (void)resortObjectsInCollection:(id<NSFastEnumeration>)collection;
-- (void)resort;
+#pragma mark - Sorting Objects
+
+@property (copy) NSArray *sortDescriptors;
+@property (readonly) BOOL isAutonomous;
+@property (readonly, copy) NSSet *observedKeyPaths;
+@property BOOL allowsConcurrentSorting;
+@property BOOL insertsEqualObjectsFirst;
+
+- (void)sortAllObjects;
+- (void)sortObject:(id)object;
+- (void)sortObjectIdenticalTo:(id)object;
+- (void)sortObjectAtIndex:(NSUInteger)index;
+- (void)sortObjectAtIndexes:(NSIndexSet *)indexes;
+- (void)sortObjectsInRange:(NSRange)range;
+- (void)sortObjectsInCollection:(id<NSFastEnumeration>)collection;
 
 
 #pragma mark - Deriving New Arrays

@@ -372,7 +372,146 @@
 
 
 #pragma mark -
-#pragma mark Managing Sorting
+#pragma mark Adding
+
+
+- (void)addObject:(NSObject *)object TRI_PUBLIC_API {
+    NSUInteger index = [self proposedIndexOfObject:object];
+    [self.backing insertObject:object atIndex:index];
+}
+
+
+- (void)addObjectsFromCollection:(NSObject<NSFastEnumeration> *)collection TRI_PUBLIC_API {
+    NSMutableArray *backing = self.backing;
+    if ([collection isKindOfClass:[NSArray class]]) {
+        NSIndexSet *indexes = [self proposedIndexesOfObjectsInCollection:collection];
+        [backing insertObjects:(NSArray *)collection atIndexes:indexes];
+    }
+    else {
+        for (NSObject *object in collection) {
+            NSUInteger index = [self proposedIndexOfObject:object];
+            [backing insertObject:object atIndex:index];
+        }
+    }
+}
+
+
+- (NSUInteger)proposedIndexOfObject:(NSObject *)object TRI_PUBLIC_API {
+    NSMutableArray *backing = self.backing;
+    NSComparator comparator = self.combinedComparator;
+    if (comparator) {
+        NSRange range = NSMakeRange(0, backing.count);
+        NSBinarySearchingOptions options = NSBinarySearchingInsertionIndex;
+        options |= (self.insertsEqualObjectsFirst
+                    ? NSBinarySearchingFirstEqual
+                    : NSBinarySearchingLastEqual);
+        return [backing indexOfObject:object inSortedRange:range options:options usingComparator:comparator];
+    }
+    else {
+        return backing.count;
+    }
+}
+
+
+- (NSIndexSet *)proposedIndexesOfObjectsInCollection:(NSObject<NSFastEnumeration> *)collection TRI_PUBLIC_API {
+    // These indexes are good only for inserting those object one after another.
+    NSMutableIndexSet *independentIdexes = [NSMutableIndexSet new];
+    for (NSObject *object in collection) {
+        NSUInteger index = [self proposedIndexOfObject:object];
+        [independentIdexes addIndex:index];
+    }
+    // These indexes are shifted by previous inserts, so these can then be used for adding multiple objects at once.
+    NSMutableIndexSet *shiftedIndexes = [NSMutableIndexSet new];
+    __block NSUInteger shift = 0;
+    [independentIdexes enumerateIndexesUsingBlock:^(NSUInteger index, __unused BOOL *stop) {
+        [shiftedIndexes addIndex:(index + shift)];
+        shift ++;
+    }];
+    return shiftedIndexes;
+}
+
+
+
+
+
+#pragma mark Removing
+
+
+- (void)removeAllObjects TRI_PUBLIC_API {
+    [self.backing removeAllObjects];
+}
+
+
+- (void)removeObject:(NSObject *)object TRI_PUBLIC_API {
+    [self.backing removeObject:object];
+}
+
+
+- (void)removeObjectIdenticalTo:(NSObject *)object TRI_PUBLIC_API {
+    [self.backing removeObjectIdenticalTo:object];
+}
+
+
+- (void)removeObjectAtIndex:(NSUInteger)index TRI_PUBLIC_API {
+    [self.backing removeObjectAtIndex:index];
+}
+
+
+- (void)removeObjectsAtIndexes:(NSIndexSet *)indexes TRI_PUBLIC_API {
+    [self.backing removeObjectsAtIndexes:indexes];
+}
+
+- (void)removeObjectsInRange:(NSRange)range TRI_PUBLIC_API {
+    [self.backing removeObjectsInRange:range];
+}
+
+
+- (void)removeObjectsInCollection:(NSObject<NSFastEnumeration> *)collection TRI_PUBLIC_API {
+    NSMutableArray *backing = self.backing;
+    if ([collection isKindOfClass:[NSArray class]]) {
+        [backing removeObjectsInArray:(NSArray *)collection];
+    }
+    else {
+        for (NSObject *object in collection) {
+            [backing removeObject:object];
+        }
+    }
+}
+
+
+
+
+
+#pragma mark Filtering
+
+
+- (void)filterUsingPredicate:(NSPredicate *)predicate TRI_PUBLIC_API {
+    [self.backing filterUsingPredicate:predicate];
+}
+
+
+- (void)filterUsingBlock:(BOOL (^)(id, NSUInteger))shouldKeep TRI_PUBLIC_API {
+    NSUInteger index = 0;
+    NSMutableArray *backing = self.backing;
+    for (NSObject *object in [backing copy]) {
+        if ( ! shouldKeep(object, index)) {
+            [backing removeObjectAtIndex:index];
+        }
+        index ++;
+    }
+}
+
+
+- (NSArray *)filteredArrayUsingPredicate:(NSPredicate *)predicate TRI_PUBLIC_API {
+    return [self.backing filteredArrayUsingPredicate:predicate];
+}
+
+
+
+
+
+#pragma mark -
+#pragma mark Sorting
 
 
 @synthesize sortDescriptors = _sortDescriptors;
@@ -408,7 +547,7 @@
             }
             return NSOrderedSame;
         }];
-        [self resort];
+        [self sortAllObjects];
     }
     else {
         self.combinedComparator = nil;
@@ -437,144 +576,7 @@
 }
 
 
-
-
-
-#pragma mark -
-#pragma mark Adding Objects
-
-
-- (void)addObject:(NSObject *)object TRI_PUBLIC_API {
-    NSUInteger index = [self proposedIndexOfObject:object];
-    [self.backing insertObject:object atIndex:index];
-}
-
-
-- (void)addObjectsFromCollection:(id<NSFastEnumeration>)collection TRI_PUBLIC_API {
-    NSMutableArray *backing = self.backing;
-    for (NSObject *object in collection) {
-        NSUInteger index = [self proposedIndexOfObject:object];
-        [backing insertObject:object atIndex:index];
-    }
-}
-
-
-- (NSUInteger)proposedIndexOfObject:(NSObject *)object TRI_PUBLIC_API {
-    NSMutableArray *backing = self.backing;
-    NSComparator comparator = self.combinedComparator;
-    if (comparator) {
-        NSRange range = NSMakeRange(0, backing.count);
-        NSBinarySearchingOptions options = NSBinarySearchingInsertionIndex;
-        options |= (self.insertsEqualObjectsFirst
-                    ? NSBinarySearchingFirstEqual
-                    : NSBinarySearchingLastEqual);
-        return [backing indexOfObject:object inSortedRange:range options:options usingComparator:comparator];
-    }
-    else {
-        return backing.count;
-    }
-}
-
-
-- (NSIndexSet *)proposedIndexesOfObjectsInCollection:(id<NSFastEnumeration>)collection TRI_PUBLIC_API {
-    // These indexes are good only for inserting those object one after another.
-    NSMutableIndexSet *independentIdexes = [NSMutableIndexSet new];
-    for (NSObject *object in collection) {
-        NSUInteger index = [self proposedIndexOfObject:object];
-        [independentIdexes addIndex:index];
-    }
-    // These indexes are shifted by previous inserts, so these can then be used for adding multiple objects at once.
-    NSMutableIndexSet *shiftedIndexes = [NSMutableIndexSet new];
-    __block NSUInteger shift = 0;
-    [independentIdexes enumerateIndexesUsingBlock:^(NSUInteger index, __unused BOOL *stop) {
-        [shiftedIndexes addIndex:(index + shift)];
-        shift ++;
-    }];
-    return shiftedIndexes;
-}
-
-
-
-
-
-#pragma mark - Removing Objects
-
-
-- (void)removeAllObjects TRI_PUBLIC_API {
-    [self.backing removeAllObjects];
-}
-
-
-- (void)removeObject:(NSObject *)object TRI_PUBLIC_API {
-    [self.backing removeObject:object];
-}
-
-
-- (void)removeObjectIdenticalTo:(NSObject *)object TRI_PUBLIC_API {
-    [self.backing removeObjectIdenticalTo:object];
-}
-
-
-- (void)removeObjectAtIndex:(NSUInteger)index TRI_PUBLIC_API {
-    [self.backing removeObjectAtIndex:index];
-}
-
-
-- (void)removeObjectsAtIndexes:(NSIndexSet *)indexes TRI_PUBLIC_API {
-    [self.backing removeObjectsAtIndexes:indexes];
-}
-
-
-- (void)removeObjectsInCollection:(id<NSFastEnumeration>)collection TRI_PUBLIC_API {
-    NSMutableArray *backing = self.backing;
-    for (NSObject *object in collection) {
-        [backing removeObject:object];
-    }
-}
-
-
-
-
-
-#pragma mark Filtering Objects
-
-
-- (void)filterUsingPredicate:(NSPredicate *)predicate TRI_PUBLIC_API {
-    [self.backing filterUsingPredicate:predicate];
-}
-
-
-- (void)filterUsingBlock:(BOOL (^)(id, NSUInteger))shouldKeep TRI_PUBLIC_API {
-    NSUInteger index = 0;
-    NSMutableArray *backing = self.backing;
-    for (NSObject *object in [backing copy]) {
-        if ( ! shouldKeep(object, index)) {
-            [backing removeObjectAtIndex:index];
-        }
-        index ++;
-    }
-}
-
-
-
-
-
-#pragma mark Resorting Objects
-
-
-- (void)resortObject:(id)object TRI_PUBLIC_API {
-    [self removeObject:object];
-    [self addObject:object];
-}
-
-
-- (void)resortObjectsInCollection:(id<NSFastEnumeration>)collection TRI_PUBLIC_API {
-    [self removeObjectsInCollection:collection];
-    [self addObjectsFromCollection:collection];
-}
-
-
-- (void)resort TRI_PUBLIC_API {
+- (void)sortAllObjects TRI_PUBLIC_API {
     NSComparator comparator = self.combinedComparator;
     if (comparator) {
         NSSortOptions options = NSSortStable;
@@ -584,6 +586,60 @@
         [self.backing sortWithOptions:options usingComparator:comparator];
     }
 }
+
+
+- (void)sortObject:(NSObject *)object TRI_PUBLIC_API {
+    if ([self.backing containsObject:object]) {
+        [self removeObject:object];
+        [self addObject:object];
+    }
+}
+
+
+- (void)sortObjectIdenticalTo:(id)object TRI_PUBLIC_API {
+    if ([self.backing indexOfObjectIdenticalTo:object] != NSNotFound) {
+        [self removeObjectIdenticalTo:object];
+        [self addObject:object];
+    }
+}
+
+
+- (void)sortObjectAtIndex:(NSUInteger)index TRI_PUBLIC_API {
+    id object = [self.backing objectAtIndex:index];
+    [self removeObjectAtIndex:index];
+    [self addObject:object];
+}
+
+
+- (void)sortObjectAtIndexes:(NSIndexSet *)indexes TRI_PUBLIC_API {
+    NSArray *objects = [self.backing objectsAtIndexes:indexes];
+    [self removeObjectsAtIndexes:indexes];
+    [self addObjectsFromCollection:objects];
+}
+
+
+- (void)sortObjectsInRange:(NSRange)range TRI_PUBLIC_API {
+    NSArray *objects = [self.backing subarrayWithRange:range];
+    [self removeObjectsInRange:range];
+    [self addObjectsFromCollection:objects];
+}
+
+
+- (void)sortObjectsInCollection:(id<NSFastEnumeration>)collection TRI_PUBLIC_API {
+    NSMutableArray *backing = self.backing;
+    // Find only those that are actually contained.
+    NSMutableArray *subcollection = [NSMutableArray new];
+    for (NSObject *object in collection) {
+        if ([backing containsObject:object]) {
+            [subcollection addObject:object];
+        }
+    }
+    [self removeObjectsInCollection:subcollection];
+    [self addObjectsFromCollection:subcollection];
+}
+
+
+
 
 
 
