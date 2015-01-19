@@ -107,6 +107,19 @@
 }
 
 
+//! The following methods already return correct subclass, see tests.
+/*
+ + (instancetype)array;
+ + (instancetype)arrayWithObject:(id)anObject;
+ + (instancetype)arrayWithObjects:(id)firstObj, ... NS_REQUIRES_NIL_TERMINATION;
+ + (instancetype)arrayWithObjects:(const id [])objects count:(NSUInteger)cnt;
+ + (instancetype)arrayWithArray:(NSArray *)array;
+ - (instancetype)initWithObjects:(id)firstObj, ... NS_REQUIRES_NIL_TERMINATION;
+ - (instancetype)initWithArray:(NSArray *)array;
+ - (instancetype)initWithArray:(NSArray *)array copyItems:(BOOL)flag;
+ */
+
+
 + (instancetype)arrayWithContentsOfFile:(NSString *)path {
     NSMutableArray *mutable = [NSMutableArray arrayWithContentsOfFile:path];
     return [[self alloc] initWithMutableObjects:mutable];
