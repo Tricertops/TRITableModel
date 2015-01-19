@@ -24,7 +24,7 @@
 @interface TRISortedArray ()
 
 
-@property (readonly) NSMutableArray *objects;
+@property (readonly) NSMutableArray *backing;
 
 
 - (instancetype)initWithCoder:(NSCoder *)decoder NS_DESIGNATED_INITIALIZER;
@@ -52,7 +52,7 @@
     self = [super init];
     if (self) {
         self->_sortDescriptors = [NSArray new];
-        self->_objects = [NSMutableArray arrayWithCapacity:capacity];
+        self->_backing = [NSMutableArray arrayWithCapacity:capacity];
     }
     return self;
 }
@@ -64,17 +64,18 @@
         self->_sortDescriptors = [decoder decodeObjectOfClass:[NSArray class] forKey:@"sortDescriptors"];
         [self->_sortDescriptors makeObjectsPerformSelector:@selector(allowEvaluation)];
         
-        self->_objects = [decoder decodeObjectOfClass:[NSMutableArray class] forKey:@"objects"];
+        self->_backing = [decoder decodeObjectOfClass:[NSMutableArray class] forKey:@"objects"];
     }
     return self;
 }
 
 
 /// Used by convenience initializers that already have NSMutableArray instance that can be used directly.
-- (instancetype)initWithMutableObjects:(NSMutableArray *)objects {
+- (instancetype)initWithBacking:(NSMutableArray *)backing {
     self = [self initWithCapacity:0];
     if (self) {
-        self->_objects = objects;
+        NSParameterAssert(backing != nil);
+        self->_backing = backing;
     }
     return self;
 }
@@ -92,7 +93,7 @@
 
 
 - (instancetype)initWithArray:(NSArray *)array sortDescriptor:(NSArray *)sortDescriptors TRI_PUBLIC_API {
-    self = [self initWithMutableObjects:[array mutableCopy]];
+    self = [self initWithBacking:[NSMutableArray arrayWithArray:array]];
     if (self) {
         // Sort.
         self.sortDescriptors = sortDescriptors;
@@ -103,7 +104,7 @@
 
 - (instancetype)initWithObjects:(const id [])objects count:(NSUInteger)count TRI_PUBLIC_API {
     NSMutableArray *mutable = [[NSMutableArray alloc] initWithObjects:objects count:count];
-    return [self initWithMutableObjects:mutable];
+    return [self initWithBacking:mutable];
 }
 
 
@@ -120,27 +121,27 @@
  */
 
 
-+ (instancetype)arrayWithContentsOfFile:(NSString *)path {
++ (instancetype)arrayWithContentsOfFile:(NSString *)path TRI_PUBLIC_API {
     NSMutableArray *mutable = [NSMutableArray arrayWithContentsOfFile:path];
-    return [[self alloc] initWithMutableObjects:mutable];
+    return [[self alloc] initWithBacking:mutable];
 }
 
 
-+ (instancetype)arrayWithContentsOfURL:(NSURL *)URL {
++ (instancetype)arrayWithContentsOfURL:(NSURL *)URL TRI_PUBLIC_API {
     NSMutableArray *mutable = [NSMutableArray arrayWithContentsOfURL:URL];
-    return [[self alloc] initWithMutableObjects:mutable];
+    return [[self alloc] initWithBacking:mutable];
 }
 
 
-- (instancetype)initWithContentsOfFile:(NSString *)path {
+- (instancetype)initWithContentsOfFile:(NSString *)path TRI_PUBLIC_API {
     NSMutableArray *mutable = [[NSMutableArray alloc] initWithContentsOfFile:path];
-    return [self initWithMutableObjects:mutable];
+    return [self initWithBacking:mutable];
 }
 
 
-- (instancetype)initWithContentsOfURL:(NSURL *)URL {
+- (instancetype)initWithContentsOfURL:(NSURL *)URL TRI_PUBLIC_API {
     NSMutableArray *mutable = [[NSMutableArray alloc] initWithContentsOfURL:URL];
-    return [self initWithMutableObjects:mutable];
+    return [self initWithBacking:mutable];
 }
 
 
