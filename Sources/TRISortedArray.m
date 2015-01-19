@@ -229,8 +229,10 @@
 
 
 - (void)addObjectsFromCollection:(id<NSFastEnumeration>)collection TRI_PUBLIC_API {
+    NSMutableArray *backing = self.backing;
     for (NSObject *object in collection) {
-        [self addObject:object];
+        NSUInteger index = [self proposedIndexOfObject:object];
+        [backing insertObject:object atIndex:index];
     }
 }
 
@@ -268,6 +270,47 @@
     }];
     return shiftedIndexes;
 }
+
+
+
+
+
+#pragma mark -
+#pragma mark - Removing Objects
+
+
+- (void)removeAllObjects {
+    [self.backing removeAllObjects];
+}
+
+
+- (void)removeObject:(NSObject *)object {
+    [self.backing removeObject:object];
+}
+
+
+- (void)removeObjectIdenticalTo:(NSObject *)object {
+    [self.backing removeObjectIdenticalTo:object];
+}
+
+
+- (void)removeObjectAtIndex:(NSUInteger)index {
+    [self.backing removeObjectAtIndex:index];
+}
+
+
+- (void)removeObjectsAtIndexes:(NSIndexSet *)indexes {
+    [self.backing removeObjectsAtIndexes:indexes];
+}
+
+
+- (void)removeObjectsInCollection:(id<NSFastEnumeration>)collection {
+    NSMutableArray *backing = self.backing;
+    for (NSObject *object in collection) {
+        [backing removeObject:object];
+    }
+}
+
 
 
 
