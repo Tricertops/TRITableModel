@@ -338,12 +338,31 @@
 
 
 
+#pragma mark - Resorting Objects
 
 
+- (void)resortObject:(id)object {
+    [self removeObject:object];
+    [self addObject:object];
+}
 
 
+- (void)resortObjectsInCollection:(id<NSFastEnumeration>)collection {
+    [self removeObjectsInCollection:collection];
+    [self addObjectsFromCollection:collection];
+}
 
 
+- (void)resort {
+    NSComparator comparator = self.combinedComparator;
+    if (comparator) {
+        NSSortOptions options = NSSortStable;
+        if (self.allowsConcurrentSorting) {
+            options |= NSSortConcurrent;
+        }
+        [self.backing sortWithOptions:options usingComparator:comparator];
+    }
+}
 
 
 
