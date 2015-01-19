@@ -50,8 +50,6 @@
 - (void)filterUsingPredicate:(NSPredicate *)predicate;
 - (void)filterUsingBlock:(BOOL (^)(id object, NSUInteger index))block;
 
-- (NSArray *)filteredArrayUsingPredicate:(NSPredicate *)predicate;
-
 
 #pragma mark - Sorting Objects
 
@@ -73,7 +71,7 @@
 #pragma mark - Deriving New Arrays
 
 - (NSArray *)copy;
-- (instancetype)mutableCopy;
+- (NSMutableArray *)mutableCopy;
 
 - (NSArray *)subarrayFromIndex:(NSUInteger)firstIncludedIndex;
 - (NSArray *)subarrayToIndex:(NSUInteger)firstNotIncludedIndex;

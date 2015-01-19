@@ -514,6 +514,36 @@
 #pragma mark Sorting
 
 
+- (NSData *)sortedArrayHint {
+    return [self.backing sortedArrayHint];
+}
+
+
+- (NSArray *)sortedArrayUsingFunction:(NSInteger (*)(__strong id, __strong id, void *))comparator context:(void *)context {
+    return [self.backing sortedArrayUsingFunction:comparator context:context];
+}
+
+
+- (NSArray *)sortedArrayUsingFunction:(NSInteger (*)(__strong id, __strong id, void *))comparator context:(void *)context hint:(NSData *)hint {
+    return [self.backing sortedArrayUsingFunction:comparator context:context hint:hint];
+}
+
+
+- (NSArray *)sortedArrayUsingDescriptors:(NSArray *)sortDescriptors {
+    return [self sortedArrayUsingDescriptors:sortDescriptors];
+}
+
+
+- (NSArray *)sortedArrayUsingComparator:(NSComparator)comparator {
+    return [self sortedArrayUsingComparator:comparator];
+}
+
+
+- (NSArray *)sortedArrayWithOptions:(NSSortOptions)options usingComparator:(NSComparator)comparator {
+    return [self sortedArrayWithOptions:options usingComparator:comparator];
+}
+
+
 @synthesize sortDescriptors = _sortDescriptors;
 
 
