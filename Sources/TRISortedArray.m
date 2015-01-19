@@ -49,7 +49,7 @@
 
 
 
-#pragma mark Creating (Designed)
+#pragma mark Creating
 
 
 - (instancetype)initWithCapacity:(NSUInteger)capacity TRI_PUBLIC_API {
@@ -83,12 +83,6 @@
     }
     return self;
 }
-
-
-
-
-
-#pragma mark Creating (Extended)
 
 
 - (instancetype)init TRI_PUBLIC_API {
@@ -279,32 +273,32 @@
 #pragma mark - Removing Objects
 
 
-- (void)removeAllObjects {
+- (void)removeAllObjects TRI_PUBLIC_API {
     [self.backing removeAllObjects];
 }
 
 
-- (void)removeObject:(NSObject *)object {
+- (void)removeObject:(NSObject *)object TRI_PUBLIC_API {
     [self.backing removeObject:object];
 }
 
 
-- (void)removeObjectIdenticalTo:(NSObject *)object {
+- (void)removeObjectIdenticalTo:(NSObject *)object TRI_PUBLIC_API {
     [self.backing removeObjectIdenticalTo:object];
 }
 
 
-- (void)removeObjectAtIndex:(NSUInteger)index {
+- (void)removeObjectAtIndex:(NSUInteger)index TRI_PUBLIC_API {
     [self.backing removeObjectAtIndex:index];
 }
 
 
-- (void)removeObjectsAtIndexes:(NSIndexSet *)indexes {
+- (void)removeObjectsAtIndexes:(NSIndexSet *)indexes TRI_PUBLIC_API {
     [self.backing removeObjectsAtIndexes:indexes];
 }
 
 
-- (void)removeObjectsInCollection:(id<NSFastEnumeration>)collection {
+- (void)removeObjectsInCollection:(id<NSFastEnumeration>)collection TRI_PUBLIC_API {
     NSMutableArray *backing = self.backing;
     for (NSObject *object in collection) {
         [backing removeObject:object];
@@ -318,12 +312,12 @@
 #pragma mark - Filtering Objects
 
 
-- (void)filterUsingPredicate:(NSPredicate *)predicate {
+- (void)filterUsingPredicate:(NSPredicate *)predicate TRI_PUBLIC_API {
     [self.backing filterUsingPredicate:predicate];
 }
 
 
-- (void)filterUsingBlock:(BOOL (^)(id, NSUInteger))shouldKeep {
+- (void)filterUsingBlock:(BOOL (^)(id, NSUInteger))shouldKeep TRI_PUBLIC_API {
     NSUInteger index = 0;
     NSMutableArray *backing = self.backing;
     for (NSObject *object in [backing copy]) {
@@ -341,19 +335,19 @@
 #pragma mark - Resorting Objects
 
 
-- (void)resortObject:(id)object {
+- (void)resortObject:(id)object TRI_PUBLIC_API {
     [self removeObject:object];
     [self addObject:object];
 }
 
 
-- (void)resortObjectsInCollection:(id<NSFastEnumeration>)collection {
+- (void)resortObjectsInCollection:(id<NSFastEnumeration>)collection TRI_PUBLIC_API {
     [self removeObjectsInCollection:collection];
     [self addObjectsFromCollection:collection];
 }
 
 
-- (void)resort {
+- (void)resort TRI_PUBLIC_API {
     NSComparator comparator = self.combinedComparator;
     if (comparator) {
         NSSortOptions options = NSSortStable;
@@ -371,12 +365,12 @@
 #pragma mark - Copying
 
 
-- (NSArray *)copy {
+- (NSArray *)copy TRI_PUBLIC_API {
     return [self.backing copy];
 }
 
 
-- (instancetype)mutableCopy {
+- (instancetype)mutableCopy TRI_PUBLIC_API {
     TRISortedArray *copy = [[self.class alloc] initWithBacking:[self.backing mutableCopy]];
     copy.sortDescriptors = self.sortDescriptors;
     return copy;
