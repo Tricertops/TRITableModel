@@ -94,7 +94,7 @@
 }
 
 
-- (TRISortedArray *)sortedCopy {
+- (TRISortedArray *)sortedCopy TRI_PUBLIC_API {
     TRISortedArray *copy = [[self.class alloc] initWithBacking:[self.backing mutableCopy]];
     copy.sortDescriptors = self.sortDescriptors;
     copy.isReversed = self.isReversed;
@@ -222,7 +222,7 @@
 }
 
 
-- (void)setObjects:(NSArray *)array {
+- (void)setObjects:(NSArray *)array TRI_PUBLIC_API {
     NSMutableArray *backing = self.backing;
     [self reportWillReplaceContent];
     [self endObservingObjects:backing];
@@ -362,12 +362,12 @@
 @synthesize isReversed = _isReversed;
 
 
-- (BOOL)isReversed {
+- (BOOL)isReversed TRI_PUBLIC_API {
     return self->_isReversed;
 }
 
 
-- (void)setReversed:(BOOL)isReversed {
+- (void)setReversed:(BOOL)isReversed TRI_PUBLIC_API {
     self->_isReversed = isReversed;
     [self updateSortingAttributes];
 }
@@ -934,32 +934,32 @@
 #pragma mark NSArray: Sorting
 
 
-- (NSData *)sortedArrayHint {
+- (NSData *)sortedArrayHint TRI_PUBLIC_API {
     return [self.backing sortedArrayHint];
 }
 
 
-- (NSArray *)sortedArrayUsingFunction:(NSInteger (*)(__strong id, __strong id, void *))comparator context:(void *)context {
+- (NSArray *)sortedArrayUsingFunction:(NSInteger (*)(__strong id, __strong id, void *))comparator context:(void *)context TRI_PUBLIC_API {
     return [self.backing sortedArrayUsingFunction:comparator context:context];
 }
 
 
-- (NSArray *)sortedArrayUsingFunction:(NSInteger (*)(__strong id, __strong id, void *))comparator context:(void *)context hint:(NSData *)hint {
+- (NSArray *)sortedArrayUsingFunction:(NSInteger (*)(__strong id, __strong id, void *))comparator context:(void *)context hint:(NSData *)hint TRI_PUBLIC_API {
     return [self.backing sortedArrayUsingFunction:comparator context:context hint:hint];
 }
 
 
-- (NSArray *)sortedArrayUsingDescriptors:(NSArray *)sortDescriptors {
+- (NSArray *)sortedArrayUsingDescriptors:(NSArray *)sortDescriptors TRI_PUBLIC_API {
     return [self.backing sortedArrayUsingDescriptors:sortDescriptors];
 }
 
 
-- (NSArray *)sortedArrayUsingComparator:(NSComparator)comparator {
+- (NSArray *)sortedArrayUsingComparator:(NSComparator)comparator TRI_PUBLIC_API {
     return [self.backing sortedArrayUsingComparator:comparator];
 }
 
 
-- (NSArray *)sortedArrayWithOptions:(NSSortOptions)options usingComparator:(NSComparator)comparator {
+- (NSArray *)sortedArrayWithOptions:(NSSortOptions)options usingComparator:(NSComparator)comparator TRI_PUBLIC_API {
     return [self.backing sortedArrayWithOptions:options usingComparator:comparator];
 }
 
@@ -970,12 +970,12 @@
 #pragma mark NSArray: Key-Value Coding
 
 
-- (id)valueForKey:(NSString *)key {
+- (id)valueForKey:(NSString *)key TRI_PUBLIC_API {
     return [self.backing valueForKey:key];
 }
 
 
-- (void)setValue:(id)value forKey:(NSString *)key {
+- (void)setValue:(id)value forKey:(NSString *)key TRI_PUBLIC_API {
     [self.backing setValue:value forKey:key];
 }
 
@@ -986,27 +986,27 @@
 #pragma mark NSArray: Describing
 
 
-- (NSString *)description {
+- (NSString *)description TRI_PUBLIC_API {
     return [self.backing description];
 }
 
 
-- (NSString *)descriptionWithLocale:(id)locale {
+- (NSString *)descriptionWithLocale:(id)locale TRI_PUBLIC_API {
     return [self.backing descriptionWithLocale:locale];
 }
 
 
-- (NSString *)descriptionWithLocale:(id)locale indent:(NSUInteger)level {
+- (NSString *)descriptionWithLocale:(id)locale indent:(NSUInteger)level TRI_PUBLIC_API {
     return [self.backing descriptionWithLocale:locale indent:level];
 }
 
 
-- (NSString *)debugDescription {
+- (NSString *)debugDescription TRI_PUBLIC_API {
     return [self.backing debugDescription];
 }
 
 
-- (NSString *)componentsJoinedByString:(NSString *)separator {
+- (NSString *)componentsJoinedByString:(NSString *)separator TRI_PUBLIC_API {
     return [self.backing componentsJoinedByString:separator];
 }
 
@@ -1017,12 +1017,12 @@
 #pragma mark NSArray: Serializing
 
 
-- (BOOL)writeToFile:(NSString *)path atomically:(BOOL)useAuxiliaryFile {
+- (BOOL)writeToFile:(NSString *)path atomically:(BOOL)useAuxiliaryFile TRI_PUBLIC_API {
     return [self.backing writeToFile:path atomically:useAuxiliaryFile];
 }
 
 
-- (BOOL)writeToURL:(NSURL *)URL atomically:(BOOL)atomically {
+- (BOOL)writeToURL:(NSURL *)URL atomically:(BOOL)atomically TRI_PUBLIC_API {
     return [self.backing writeToURL:URL atomically:atomically];
 }
 
