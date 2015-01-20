@@ -216,6 +216,14 @@
 }
 
 
+- (void)setObjects:(NSArray *)array {
+    [self beginChanges];
+    [self.backing setArray:array];
+    [self sortAllObjects];
+    [self endChanges];
+}
+
+
 
 
 

@@ -13,7 +13,7 @@
 
 
 
-@protocol TRISortedArrayObserver <NSObject>
+@protocol TRISortedArrayObserver <NSObject> @optional
 
 
 #pragma mark - Grouping
@@ -23,6 +23,9 @@
 
 
 #pragma mark - Mutating
+
+- (void)sortedArrayWillReplaceContent:(TRISortedArray *)sortedArray;
+- (void)sortedArrayDidReplaceContent:(TRISortedArray *)sortedArray;
 
 - (void)sortedArray:(TRISortedArray *)sortedArray didInsertObject:(id)object atIndex:(NSUInteger)index;
 - (void)sortedArray:(TRISortedArray *)sortedArray didRemoveObject:(id)object fromIndex:(NSUInteger)index;

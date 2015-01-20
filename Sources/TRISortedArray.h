@@ -39,6 +39,8 @@
 - (void)addObjectsFromCollection:(id<NSFastEnumeration>)collection;
 @property BOOL insertsEqualObjectsFirst;
 
+- (void)setObjects:(NSArray *)array;
+
 
 #pragma mark - Removing Objects
 
