@@ -16,6 +16,7 @@
 @interface TRISordedArrayTests : XCTestCase
 
 @property (readonly) NSSortDescriptor *sortAscending;
+@property (readonly) NSSortDescriptor *sortDescending;
 @property (readonly) NSArray *firstNames;
 
 @end
@@ -35,6 +36,11 @@
 
 - (NSSortDescriptor *)sortAscending {
     return [NSSortDescriptor sortDescriptorWithKey:@"self" ascending:YES];
+}
+
+
+- (NSSortDescriptor *)sortDescending {
+    return [NSSortDescriptor sortDescriptorWithKey:@"self" ascending:NO];
 }
 
 
@@ -160,6 +166,116 @@
 
 
 
+
+
+#pragma mark -
+#pragma mark Sorting: Insertion Sort
+
+
+- (void)test_InsertionSort_addObject {
+    TRISortedArray *array = [TRISortedArray new];
+    array.sortDescriptors = @[self.sortAscending];
+    
+    [array addObject:@"Daniel"];
+    XCTAssertEqualObjects(array[0], @"Daniel");
+    
+    [array addObject:@"Bob"];
+    XCTAssertEqualObjects(array[0], @"Bob");
+    XCTAssertEqualObjects(array[1], @"Daniel");
+    
+    [array addObject:@"Adam"];
+    XCTAssertEqualObjects(array[0], @"Adam");
+    XCTAssertEqualObjects(array[1], @"Bob");
+    XCTAssertEqualObjects(array[2], @"Daniel");
+    
+    [array addObject:@"Eve"];
+    XCTAssertEqualObjects(array[0], @"Adam");
+    XCTAssertEqualObjects(array[1], @"Bob");
+    XCTAssertEqualObjects(array[2], @"Daniel");
+    XCTAssertEqualObjects(array[3], @"Eve");
+    
+    [array addObject:@"Clark"];
+    XCTAssertEqualObjects(array[0], @"Adam");
+    XCTAssertEqualObjects(array[1], @"Bob");
+    XCTAssertEqualObjects(array[2], @"Clark");
+    XCTAssertEqualObjects(array[3], @"Daniel");
+    XCTAssertEqualObjects(array[4], @"Eve");
+}
+
+
+- (void)test_InsertionSort_addObjects {
+    TRISortedArray *array = [TRISortedArray new];
+    array.sortDescriptors = @[self.sortAscending];
+    
+    [array addObjectsFromCollection:self.firstNames];
+    XCTAssertEqualObjects(array[0], @"Adam");
+    XCTAssertEqualObjects(array[1], @"Bob");
+    XCTAssertEqualObjects(array[2], @"Clark");
+    XCTAssertEqualObjects(array[3], @"Daniel");
+    XCTAssertEqualObjects(array[4], @"Eve");
+}
+
+
+- (void)test_InsertionSort_setObjects {
+    TRISortedArray *array = [TRISortedArray new];
+    array.sortDescriptors = @[self.sortAscending];
+    
+    [array setObjects:self.firstNames];
+    XCTAssertEqualObjects(array[0], @"Adam");
+    XCTAssertEqualObjects(array[1], @"Bob");
+    XCTAssertEqualObjects(array[2], @"Clark");
+    XCTAssertEqualObjects(array[3], @"Daniel");
+    XCTAssertEqualObjects(array[4], @"Eve");
+}
+
+
+
+
+
+#pragma mark Sorting: Changing Sort
+
+
+- (void)test_ChangingSort_setSortDescriptors {
+    TRISortedArray *array = [TRISortedArray arrayWithArray:self.firstNames];
+    XCTAssertEqualObjects(array, self.firstNames);
+    
+    array.sortDescriptors = @[self.sortAscending];
+    XCTAssertEqualObjects(array[0], @"Adam");
+    XCTAssertEqualObjects(array[1], @"Bob");
+    XCTAssertEqualObjects(array[2], @"Clark");
+    XCTAssertEqualObjects(array[3], @"Daniel");
+    XCTAssertEqualObjects(array[4], @"Eve");
+    
+    array.sortDescriptors = @[self.sortDescending];
+    XCTAssertEqualObjects(array[4], @"Adam");
+    XCTAssertEqualObjects(array[3], @"Bob");
+    XCTAssertEqualObjects(array[2], @"Clark");
+    XCTAssertEqualObjects(array[1], @"Daniel");
+    XCTAssertEqualObjects(array[0], @"Eve");
+}
+
+
+- (void)test_ChangingSort_setReversed {
+    TRISortedArray *array = [TRISortedArray arrayWithArray:self.firstNames];
+    
+    array.sortDescriptors = @[self.sortAscending];
+    NSArray *ascendingCopy = [array copy];
+    XCTAssertEqualObjects(array[0], @"Adam");
+    XCTAssertEqualObjects(array[1], @"Bob");
+    XCTAssertEqualObjects(array[2], @"Clark");
+    XCTAssertEqualObjects(array[3], @"Daniel");
+    XCTAssertEqualObjects(array[4], @"Eve");
+    
+    array.isReversed = YES;
+    XCTAssertEqualObjects(array[4], @"Adam");
+    XCTAssertEqualObjects(array[3], @"Bob");
+    XCTAssertEqualObjects(array[2], @"Clark");
+    XCTAssertEqualObjects(array[1], @"Daniel");
+    XCTAssertEqualObjects(array[0], @"Eve");
+    
+    array.isReversed = NO;
+    XCTAssertEqualObjects(array, ascendingCopy);
+}
 
 
 

@@ -621,7 +621,7 @@
 
 
 - (void)reportDidSort {
-    TRIDebug(@"<%@ %p> sorted", self.class, self);
+    TRIDebug(@"<%@ %p> sorted %tu objects", self.class, self, self.backing.count);
     for (NSObject<TRISortedArrayObserver> *observer in self.observers) {
         if ([observer respondsToSelector:@selector(sortedArrayDidSort:)]) {
             [observer sortedArrayDidSort:self];
