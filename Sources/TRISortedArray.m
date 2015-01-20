@@ -103,6 +103,11 @@
 }
 
 
+- (void)dealloc {
+    [self endObservingObjects:self.backing];
+}
+
+
 
 
 
@@ -185,18 +190,15 @@
     NSUInteger index = [self proposedIndexOfObject:object];
     [self reportWillInsertObject:object atIndex:index];
     [self.backing insertObject:object atIndex:index];
+    [self beginObservingObjects:@[object]];
     [self reportDidInsertObject:object atIndex:index];
 }
 
 
 - (void)addObjectsFromCollection:(NSObject<NSFastEnumeration> *)collection TRI_PUBLIC_API {
-    NSMutableArray *backing = self.backing;
     [self beginChanges];
     for (NSObject *object in collection) {
-        NSUInteger index = [self proposedIndexOfObject:object];
-        [self reportWillInsertObject:object atIndex:index];
-        [backing insertObject:object atIndex:index];
-        [self reportDidInsertObject:object atIndex:index];
+        [self addObject:object];
     }
     [self endChanges];
 }
@@ -220,8 +222,11 @@
 
 
 - (void)setObjects:(NSArray *)array {
+    NSMutableArray *backing = self.backing;
     [self reportWillReplaceContent];
-    [self.backing setArray:array];
+    [self endObservingObjects:backing];
+    [backing setArray:array];
+    [self beginObservingObjects:backing];
     [self sort];
     [self reportDidReplaceContent];
 }
@@ -235,14 +240,17 @@
 
 - (void)removeObject:(NSObject *)object atIndex:(NSUInteger)index TRI_PUBLIC_API {
     [self reportWillRemoveObject:object fromIndex:index];
+    [self endObservingObjects:@[object]];
     [self.backing removeObjectAtIndex:index];
     [self reportDidRemoveObject:object fromIndex:index];
 }
 
 
 - (void)removeAllObjects TRI_PUBLIC_API {
+    NSMutableArray *backing = self.backing;
     [self reportWillReplaceContent];
-    [self.backing removeAllObjects];
+    [self endObservingObjects:backing];
+    [backing removeAllObjects];
     [self reportDidReplaceContent];
 }
 
@@ -322,7 +330,8 @@
 
 
 
-#pragma mark Mutations: Sorting
+#pragma mark -
+#pragma mark Sort: Performing
 
 
 @synthesize sortDescriptors = _sortDescriptors;
@@ -359,10 +368,9 @@
 
 - (void)updateSortingAttributes {
     NSArray *sortDescriptors = self.sortDescriptors;
+    NSMutableArray *backing = self.backing;
+    
     if (sortDescriptors.count > 0) {
-        NSSet *keyPaths = [self keyPathsFromSortDescriptors:sortDescriptors];
-        self.observedKeyPaths = keyPaths;
-        //TODO: Observe key-paths
         BOOL isReversed = self.isReversed;
         [self setCombinedComparator:^NSComparisonResult(id objectA, id objectB) {
             for (NSSortDescriptor *descriptor in sortDescriptors) {
@@ -372,14 +380,23 @@
             }
             return NSOrderedSame;
         }];
+        
+        NSSet *keyPaths = [self keyPathsFromSortDescriptors:sortDescriptors];
+        if ( ! [keyPaths isEqualToSet:self.observedKeyPaths]) {
+            [self endObservingObjects:backing];
+            self.observedKeyPaths = keyPaths;
+            [self beginObservingObjects:backing];
+        }
+        
         [self reportWillSort];
         [self sort];
         [self reportDidSort];
     }
     else {
         self.combinedComparator = nil;
+        
+        [self endObservingObjects:backing];
         self.observedKeyPaths = nil;
-        //TODO: Un-observe key-paths
     }
 }
 
@@ -417,6 +434,42 @@
     NSUInteger destinationIndex = [self proposedIndexOfObject:object];
     [backing insertObject:object atIndex:destinationIndex];
     [self reportDidMoveObject:object fromIndex:sourceIndex toIndex:destinationIndex];
+}
+
+
+
+
+
+#pragma mark Sort: Observing
+
+
++ (void*)observationContext {
+    static void* TRISortedArrayKVOContext = NULL;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        TRISortedArrayKVOContext = &TRISortedArrayKVOContext;
+    });
+    return TRISortedArrayKVOContext;
+}
+
+
+- (void)beginObservingObjects:(NSArray *)objects {
+    void* context = [TRISortedArray observationContext];
+    NSIndexSet *allIndexes = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, objects.count)];
+    
+    for (NSString *keyPath in self.observedKeyPaths) {
+        [objects addObserver:self toObjectsAtIndexes:allIndexes forKeyPath:keyPath options:kNilOptions context:context];
+    }
+}
+
+
+- (void)endObservingObjects:(NSArray *)objects {
+    void* context = [TRISortedArray observationContext];
+    NSIndexSet *allIndexes = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, objects.count)];
+    
+    for (NSString *keyPath in self.observedKeyPaths) {
+        [objects removeObserver:self fromObjectsAtIndexes:allIndexes forKeyPath:keyPath context:context];
+    }
 }
 
 
