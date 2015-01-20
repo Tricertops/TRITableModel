@@ -15,6 +15,9 @@
 
 @interface TRISordedArrayTests : XCTestCase
 
+@property (readonly) NSSortDescriptor *sortAscending;
+@property (readonly) NSArray *firstNames;
+
 @end
 
 
@@ -27,8 +30,30 @@
 
 
 
+#pragma mark Helpers
+
+
+- (NSSortDescriptor *)sortAscending {
+    return [NSSortDescriptor sortDescriptorWithKey:@"self" ascending:YES];
+}
+
+
+- (NSArray *)firstNames {
+    return @[
+             @"Bob",
+             @"Eve",
+             @"Adam",
+             @"Daniel",
+             @"Clark",
+             ];
+}
+
+
+
+
+
 #pragma mark -
-#pragma mark Creating (Returns Subclass)
+#pragma mark Creating: Returns Subclass
 
 
 - (void)test_ReturnsSubclass_array {
@@ -77,6 +102,37 @@
 - (void)test_ReturnsSubclass_initWithArray_copyItems {
     TRISortedArray *array = [[TRISortedArray alloc] initWithArray:@[ @"", @0 ] copyItems:YES];
     XCTAssertTrue([array isKindOfClass:[TRISortedArray class]]);
+}
+
+
+
+
+
+#pragma mark Creating: Correct Content
+
+
+- (void)test_CorrectContent_init {
+    TRISortedArray *array = [[TRISortedArray alloc] init];
+    XCTAssertEqual(array.count, 0);
+    XCTAssertNil(array.firstObject);
+}
+
+
+- (void)test_CorrectContent_initWithCapacity {
+    TRISortedArray *array = [[TRISortedArray alloc] initWithCapacity:10];
+    XCTAssertEqual(array.count, 0);
+    XCTAssertNil(array.firstObject);
+}
+
+
+- (void)test_CorrectContent_initWithArray_sortDescriptors {
+    TRISortedArray *array = [[TRISortedArray alloc] initWithArray:self.firstNames sortDescriptors:nil];
+    XCTAssertEqual(array.count, 5);
+    XCTAssertEqual(array[0], self.firstNames[0]);
+    XCTAssertEqual(array[1], self.firstNames[1]);
+    XCTAssertEqual(array[2], self.firstNames[2]);
+    XCTAssertEqual(array[3], self.firstNames[3]);
+    XCTAssertEqual(array[4], self.firstNames[4]);
 }
 
 

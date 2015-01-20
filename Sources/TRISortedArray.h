@@ -21,7 +21,7 @@
 
 - (instancetype)init;
 - (instancetype)initWithCapacity:(NSUInteger)capacity NS_DESIGNATED_INITIALIZER;
-- (instancetype)initWithArray:(NSArray *)array sortDescriptor:(NSArray *)sortDescriptors;
+- (instancetype)initWithArray:(NSArray *)array sortDescriptors:(NSArray *)sortDescriptors;
 
 
 #pragma mark - Deserializing Array

@@ -84,7 +84,7 @@
 }
 
 
-- (instancetype)initWithArray:(NSArray *)array sortDescriptor:(NSArray *)sortDescriptors TRI_PUBLIC_API {
+- (instancetype)initWithArray:(NSArray *)array sortDescriptors:(NSArray *)sortDescriptors TRI_PUBLIC_API {
     self = [self initWithBacking:[NSMutableArray arrayWithArray:array]];
     if (self) {
         self->_sortDescriptors = sortDescriptors;
