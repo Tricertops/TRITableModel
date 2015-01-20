@@ -62,7 +62,7 @@
 #pragma mark - Sorting Objects
 
 @property (copy) NSArray *sortDescriptors;
-//TODO: @property BOOL isDescending;
+@property (setter=setReversed:) BOOL isReversed;
 @property BOOL allowsConcurrentSorting;
 
 

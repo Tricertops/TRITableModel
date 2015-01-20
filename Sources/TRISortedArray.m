@@ -87,7 +87,7 @@
     self = [self initWithBacking:[NSMutableArray arrayWithArray:array]];
     if (self) {
         self->_sortDescriptors = sortDescriptors;
-        [self sortDescriptorsChanged];
+        [self updateSortingAttributes];
     }
     return self;
 }
@@ -96,6 +96,7 @@
 - (TRISortedArray *)sortedCopy {
     TRISortedArray *copy = [[self.class alloc] initWithBacking:[self.backing mutableCopy]];
     copy.sortDescriptors = self.sortDescriptors;
+    copy.isReversed = self.isReversed;
     copy.allowsConcurrentSorting = self.allowsConcurrentSorting;
     copy.insertsEqualObjectsFirst = self.insertsEqualObjectsFirst;
     return copy;
@@ -113,16 +114,16 @@
     if (self) {
         self->_backing = [decoder decodeObjectOfClass:[NSMutableArray class] forKey:@"TRI.objects"] ?: [NSMutableArray new];
         
-        NSArray *sortDescriptors = [decoder decodeObjectOfClass:[NSArray class] forKey:@"TRI.sortDescriptors"];
+        self->_sortDescriptors = [decoder decodeObjectOfClass:[NSArray class] forKey:@"TRI.sortDescriptors"];
+        self->_isReversed = [decoder decodeBoolForKey:@"TRI.isReversed"];
         self->_allowsConcurrentSorting = [decoder decodeBoolForKey:@"TRI.allowsConcurrent"];
         self->_insertsEqualObjectsFirst = [decoder decodeBoolForKey:@"TRI.equalFirst"];
         
         self->_observers = [decoder decodeObjectOfClass:[NSHashTable class] forKey:@"TRI.observers"] ?: [NSHashTable weakObjectsHashTable];
         self->_subscriptions = [NSMapTable weakToStrongObjectsMapTable];
         
-        [sortDescriptors makeObjectsPerformSelector:@selector(allowEvaluation)];
-        self->_sortDescriptors = sortDescriptors; // Setter is needed.
-        [self sortDescriptorsChanged];
+        [self->_sortDescriptors makeObjectsPerformSelector:@selector(allowEvaluation)];
+        [self updateSortingAttributes];
     }
     return self;
 }
@@ -132,6 +133,7 @@
     [super encodeWithCoder:encoder];
     [encoder encodeObject:self.backing forKey:@"TRI.objects"];
     [encoder encodeObject:self.sortDescriptors forKey:@"TRI.sortDescriptors"];
+    [encoder encodeBool:self.isReversed forKey:@"TRI.isReversed"];
     [encoder encodeBool:self.allowsConcurrentSorting forKey:@"TRI.allowsConcurrent"];
     [encoder encodeBool:self.insertsEqualObjectsFirst forKey:@"TRI.equalFirst"];
     [encoder encodeObject:self.observers forKey:@"TRI.observers"]; //TEST: Encodes conditionally.
@@ -337,22 +339,36 @@
 
 - (void)setSortDescriptors:(NSArray *)sortDescriptors TRI_PUBLIC_API {
     self->_sortDescriptors = [sortDescriptors copy];
-    [self sortDescriptorsChanged];
+    [self updateSortingAttributes];
 }
 
 
-- (void)sortDescriptorsChanged {
+@synthesize isReversed = _isReversed;
+
+
+- (BOOL)isReversed {
+    return self->_isReversed;
+}
+
+
+- (void)setReversed:(BOOL)isReversed {
+    self->_isReversed = isReversed;
+    [self updateSortingAttributes];
+}
+
+
+- (void)updateSortingAttributes {
     NSArray *sortDescriptors = self.sortDescriptors;
     if (sortDescriptors.count > 0) {
         NSSet *keyPaths = [self keyPathsFromSortDescriptors:sortDescriptors];
         self.observedKeyPaths = keyPaths;
         //TODO: Observe key-paths
-        
+        BOOL isReversed = self.isReversed;
         [self setCombinedComparator:^NSComparisonResult(id objectA, id objectB) {
             for (NSSortDescriptor *descriptor in sortDescriptors) {
                 NSComparisonResult result = [descriptor compareObject:objectA toObject:objectB];
-                if (result != NSOrderedSame)
-                    return result;
+                if (isReversed) result *= -1;
+                if (result != NSOrderedSame) return result;
             }
             return NSOrderedSame;
         }];
