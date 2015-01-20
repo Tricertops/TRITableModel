@@ -25,6 +25,20 @@
 
 
 
+@interface TRITestPerson : NSObject
+
+@property NSString *firstName;
+@property NSString *lastName;
+
++ (instancetype)first:(NSString *)first last:(NSString *)last;
++ (NSArray *)sortDescriptors;
+
+@end
+
+
+
+
+
 @implementation TRISordedArrayTests
 
 
@@ -280,6 +294,58 @@
 
 
 
+
+#pragma mark Sorting: Live Changes
+
+
+- (void)test_LiveChanges {
+    TRISortedArray *array = [TRISortedArray new];
+    array.sortDescriptors = [TRITestPerson sortDescriptors];
+    
+    TRITestPerson *smith = [TRITestPerson first:@"Adam" last:@"Smith"];
+    TRITestPerson *jones = [TRITestPerson first:@"Bob" last:@"Jones"];
+    TRITestPerson *taylor = [TRITestPerson first:@"Clark" last:@"Taylor"];
+    
+    [array addObjectsFromCollection:@[taylor, smith, jones]];
+    XCTAssertEqualObjects(array[0], smith);
+    XCTAssertEqualObjects(array[1], jones);
+    XCTAssertEqualObjects(array[2], taylor);
+    
+    smith.firstName = @"Daniel";
+    XCTAssertEqualObjects(array[0], jones);
+    XCTAssertEqualObjects(array[1], taylor);
+    XCTAssertEqualObjects(array[2], smith);
+    
+    [array removeObject:jones];
+    XCTAssertEqualObjects(array[0], taylor);
+    XCTAssertEqualObjects(array[1], smith);
+}
+
+
+
+
+
+@end
+
+
+
+
+
+@implementation TRITestPerson
+
++ (instancetype)first:(NSString *)first last:(NSString *)last {
+    TRITestPerson *person = [TRITestPerson new];
+    person.firstName = first;
+    person.lastName = last;
+    return person;
+}
+
++ (NSArray *)sortDescriptors {
+    return @[
+             [NSSortDescriptor sortDescriptorWithKey:@"firstName" ascending:YES],
+             [NSSortDescriptor sortDescriptorWithKey:@"lastName" ascending:YES],
+             ];
+}
 
 @end
 
