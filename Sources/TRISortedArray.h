@@ -24,14 +24,6 @@
 - (instancetype)initWithArray:(NSArray *)array sortDescriptors:(NSArray *)sortDescriptors;
 
 
-#pragma mark - Deserializing Array
-
-- (instancetype)initWithContentsOfURL:(NSURL *)URL;
-- (instancetype)initWithContentsOfFile:(NSString *)path;
-+ (instancetype)arrayWithContentsOfURL:(NSURL *)URL;
-+ (instancetype)arrayWithContentsOfFile:(NSString *)path;
-
-
 #pragma mark - Adding Objects
 
 - (NSUInteger)proposedIndexOfObject:(id)object;

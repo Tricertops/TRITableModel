@@ -709,27 +709,6 @@
 }
 
 
-- (instancetype)initWithContentsOfURL:(NSURL *)URL TRI_PUBLIC_API {
-    NSMutableArray *mutable = [[NSMutableArray alloc] initWithContentsOfURL:URL];
-    return [self initWithBacking:mutable];
-}
-
-
-- (instancetype)initWithContentsOfFile:(NSString *)path TRI_PUBLIC_API {
-    return [self initWithContentsOfURL:[NSURL fileURLWithPath:path]];
-}
-
-
-+ (instancetype)arrayWithContentsOfURL:(NSURL *)URL TRI_PUBLIC_API {
-    return [[self alloc] initWithContentsOfURL:URL];
-}
-
-
-+ (instancetype)arrayWithContentsOfFile:(NSString *)path TRI_PUBLIC_API {
-    return [[self alloc] initWithContentsOfFile:path];
-}
-
-
 //! The following methods already return correct subclass, see tests.
 /*
  + (instancetype)array;
