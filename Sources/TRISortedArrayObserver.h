@@ -27,8 +27,16 @@
 - (void)sortedArrayWillReplaceContent:(TRISortedArray *)sortedArray;
 - (void)sortedArrayDidReplaceContent:(TRISortedArray *)sortedArray;
 
+- (void)sortedArrayWillSort:(TRISortedArray *)sortedArray;
+- (void)sortedArrayDidSort:(TRISortedArray *)sortedArray;
+
+- (void)sortedArray:(TRISortedArray *)sortedArray willInsertObject:(id)object atIndex:(NSUInteger)index;
 - (void)sortedArray:(TRISortedArray *)sortedArray didInsertObject:(id)object atIndex:(NSUInteger)index;
+
+- (void)sortedArray:(TRISortedArray *)sortedArray willRemoveObject:(id)object fromIndex:(NSUInteger)index;
 - (void)sortedArray:(TRISortedArray *)sortedArray didRemoveObject:(id)object fromIndex:(NSUInteger)index;
+
+- (void)sortedArray:(TRISortedArray *)sortedArray willMoveObject:(id)object fromIndex:(NSUInteger)sourceIndex;
 - (void)sortedArray:(TRISortedArray *)sortedArray didMoveObject:(id)object fromIndex:(NSUInteger)sourceIndex toIndex:(NSUInteger)destinationIndex;
 
 
@@ -36,6 +44,6 @@
 
 
 
-typedef void (^TRISortedArraySubscribtionBlock)(TRISortedArray *sortedArray);
+typedef void (^TRISortedArraySubscribtionBlock)(id subscriber, TRISortedArray *sortedArray);
 
 

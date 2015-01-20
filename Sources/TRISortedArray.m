@@ -232,9 +232,9 @@
 
 
 - (void)removeObject:(NSObject *)object atIndex:(NSUInteger)index TRI_PUBLIC_API {
-    [self reportWillDeleteObject:object fromIndex:index];
+    [self reportWillRemoveObject:object fromIndex:index];
     [self.backing removeObjectAtIndex:index];
-    [self reportDidDeleteObject:object fromIndex:index];
+    [self reportDidRemoveObject:object fromIndex:index];
 }
 
 
@@ -414,7 +414,9 @@
 - (void)addObserver:(NSObject<TRISortedArrayObserver> *)observer TRI_PUBLIC_API {
     [self.observers addObject:observer];
     if (self.mutations > 0) {
-        //TODO: Report begin changes
+        if ([observer respondsToSelector:@selector(sortedArrayWillBeginChanges:)]) {
+            [observer sortedArrayWillBeginChanges:self];
+        }
     }
 }
 
@@ -485,57 +487,126 @@
 
 
 - (void)reportWillBeginChanges {
-    
+    for (NSObject<TRISortedArrayObserver> *observer in self.observers) {
+        if ([observer respondsToSelector:@selector(sortedArrayWillBeginChanges:)]) {
+            [observer sortedArrayWillBeginChanges:self];
+        }
+    }
 }
 
 
 - (void)reportDidEndChanges {
-    
+    for (NSObject<TRISortedArrayObserver> *observer in self.observers) {
+        if ([observer respondsToSelector:@selector(sortedArrayDidEndChanges:)]) {
+            [observer sortedArrayDidEndChanges:self];
+        }
+    }
+    for (NSObject *subscriber in self.subscriptions) {
+        NSArray *subscribtions = [self.subscriptions objectForKey:subscriber];
+        for (TRISortedArraySubscribtionBlock block in subscribtions) {
+            block(subscriber, self);
+        }
+    }
 }
 
 
 - (void)reportWillReplaceContent {
-    
+    [self beginChanges];
+    for (NSObject<TRISortedArrayObserver> *observer in self.observers) {
+        if ([observer respondsToSelector:@selector(sortedArrayWillReplaceContent:)]) {
+            [observer sortedArrayWillReplaceContent:self];
+        }
+    }
 }
 
 
 - (void)reportDidReplaceContent {
-    
+    for (NSObject<TRISortedArrayObserver> *observer in self.observers) {
+        if ([observer respondsToSelector:@selector(sortedArrayDidReplaceContent:)]) {
+            [observer sortedArrayDidReplaceContent:self];
+        }
+    }
+    [self endChanges];
 }
 
 
 - (void)reportWillSort {
+    [self beginChanges];
+    for (NSObject<TRISortedArrayObserver> *observer in self.observers) {
+        if ([observer respondsToSelector:@selector(sortedArrayWillSort:)]) {
+            [observer sortedArrayWillSort:self];
+        }
+    }
 }
 
 
 - (void)reportDidSort {
+    for (NSObject<TRISortedArrayObserver> *observer in self.observers) {
+        if ([observer respondsToSelector:@selector(sortedArrayDidSort:)]) {
+            [observer sortedArrayDidSort:self];
+        }
+    }
+    [self endChanges];
 }
 
 
 - (void)reportWillInsertObject:(NSObject *)object atIndex:(NSUInteger)index {
+    [self beginChanges];
+    for (NSObject<TRISortedArrayObserver> *observer in self.observers) {
+        if ([observer respondsToSelector:@selector(sortedArray:willInsertObject:atIndex:)]) {
+            [observer sortedArray:self willInsertObject:object atIndex:index];
+        }
+    }
 }
 
 
 - (void)reportDidInsertObject:(NSObject *)object atIndex:(NSUInteger)index {
-    
+    for (NSObject<TRISortedArrayObserver> *observer in self.observers) {
+        if ([observer respondsToSelector:@selector(sortedArray:didInsertObject:atIndex:)]) {
+            [observer sortedArray:self didInsertObject:object atIndex:index];
+        }
+    }
+    [self endChanges];
 }
 
 
-- (void)reportWillDeleteObject:(NSObject *)object fromIndex:(NSUInteger)index {
+- (void)reportWillRemoveObject:(NSObject *)object fromIndex:(NSUInteger)index {
+    [self beginChanges];
+    for (NSObject<TRISortedArrayObserver> *observer in self.observers) {
+        if ([observer respondsToSelector:@selector(sortedArray:willRemoveObject:fromIndex:)]) {
+            [observer sortedArray:self willRemoveObject:object fromIndex:index];
+        }
+    }
 }
 
 
-- (void)reportDidDeleteObject:(NSObject *)object fromIndex:(NSUInteger)index {
-    
+- (void)reportDidRemoveObject:(NSObject *)object fromIndex:(NSUInteger)index {
+    for (NSObject<TRISortedArrayObserver> *observer in self.observers) {
+        if ([observer respondsToSelector:@selector(sortedArray:didRemoveObject:fromIndex:)]) {
+            [observer sortedArray:self didRemoveObject:object fromIndex:index];
+        }
+    }
+    [self endChanges];
 }
 
 
 - (void)reportWillMoveObject:(NSObject *)object fromIndex:(NSUInteger)sourceIndex {
+    [self beginChanges];
+    for (NSObject<TRISortedArrayObserver> *observer in self.observers) {
+        if ([observer respondsToSelector:@selector(sortedArray:willMoveObject:fromIndex:)]) {
+            [observer sortedArray:self willMoveObject:object fromIndex:sourceIndex];
+        }
+    }
 }
 
 
 - (void)reportDidMoveObject:(NSObject *)object fromIndex:(NSUInteger)sourceIndex toIndex:(NSUInteger)destinationIndex {
-    
+    for (NSObject<TRISortedArrayObserver> *observer in self.observers) {
+        if ([observer respondsToSelector:@selector(sortedArray:didMoveObject:fromIndex:toIndex:)]) {
+            [observer sortedArray:self didMoveObject:object fromIndex:sourceIndex toIndex:destinationIndex];
+        }
+    }
+    [self endChanges];
 }
 
 
