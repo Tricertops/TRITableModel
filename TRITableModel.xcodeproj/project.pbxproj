@@ -8,8 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		5B0E66341A6D187D00B64B6E /* TRITableModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B0E66281A6D187D00B64B6E /* TRITableModel.framework */; };
-		5B0E66471A6D18D700B64B6E /* TRITableModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B0E66461A6D18D700B64B6E /* TRITableModel.h */; };
-		5B0E664C1A6D18E400B64B6E /* TRITableModelTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0E664A1A6D18E400B64B6E /* TRITableModelTests.m */; };
+		5B0E66471A6D18D700B64B6E /* TRITableModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B0E66461A6D18D700B64B6E /* TRITableModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B0E664C1A6D18E400B64B6E /* TRISordedArrayTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0E664A1A6D18E400B64B6E /* TRISordedArrayTests.m */; };
+		5B0E664F1A6D1BCB00B64B6E /* TRISortedArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B0E664D1A6D1BCB00B64B6E /* TRISortedArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B0E66501A6D1BCB00B64B6E /* TRISortedArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0E664E1A6D1BCB00B64B6E /* TRISortedArray.m */; };
+		5BB3B1061A6D77EC00DA8F09 /* TRISortedArrayObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BB3B1051A6D77EC00DA8F09 /* TRISortedArrayObserver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,7 +31,10 @@
 		5B0E66441A6D18CF00B64B6E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5B0E66461A6D18D700B64B6E /* TRITableModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRITableModel.h; sourceTree = "<group>"; };
 		5B0E66491A6D18E400B64B6E /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5B0E664A1A6D18E400B64B6E /* TRITableModelTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRITableModelTests.m; sourceTree = "<group>"; };
+		5B0E664A1A6D18E400B64B6E /* TRISordedArrayTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRISordedArrayTests.m; sourceTree = "<group>"; };
+		5B0E664D1A6D1BCB00B64B6E /* TRISortedArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRISortedArray.h; sourceTree = "<group>"; };
+		5B0E664E1A6D1BCB00B64B6E /* TRISortedArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRISortedArray.m; sourceTree = "<group>"; };
+		5BB3B1051A6D77EC00DA8F09 /* TRISortedArrayObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRISortedArrayObserver.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +79,9 @@
 			isa = PBXGroup;
 			children = (
 				5B0E66461A6D18D700B64B6E /* TRITableModel.h */,
+				5B0E664D1A6D1BCB00B64B6E /* TRISortedArray.h */,
+				5B0E664E1A6D1BCB00B64B6E /* TRISortedArray.m */,
+				5BB3B1051A6D77EC00DA8F09 /* TRISortedArrayObserver.h */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -81,7 +90,7 @@
 			isa = PBXGroup;
 			children = (
 				5B0E66491A6D18E400B64B6E /* Info.plist */,
-				5B0E664A1A6D18E400B64B6E /* TRITableModelTests.m */,
+				5B0E664A1A6D18E400B64B6E /* TRISordedArrayTests.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -94,6 +103,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B0E66471A6D18D700B64B6E /* TRITableModel.h in Headers */,
+				5B0E664F1A6D1BCB00B64B6E /* TRISortedArray.h in Headers */,
+				5BB3B1061A6D77EC00DA8F09 /* TRISortedArrayObserver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -193,6 +204,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B0E66501A6D1BCB00B64B6E /* TRISortedArray.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -200,7 +212,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5B0E664C1A6D18E400B64B6E /* TRITableModelTests.m in Sources */,
+				5B0E664C1A6D18E400B64B6E /* TRISordedArrayTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -227,7 +239,6 @@
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_STATIC_ANALYZER_MODE = deep;
-				CLANG_WARN_ASSIGN_ENUM = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
@@ -288,7 +299,6 @@
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_STATIC_ANALYZER_MODE = deep;
-				CLANG_WARN_ASSIGN_ENUM = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
@@ -377,6 +387,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
+				GCC_WARN_SIGN_COMPARE = NO;
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -391,6 +402,7 @@
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 					"$(inherited)",
 				);
+				GCC_WARN_SIGN_COMPARE = NO;
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -416,6 +428,7 @@
 				5B0E66401A6D187D00B64B6E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B0E66411A6D187D00B64B6E /* Build configuration list for PBXNativeTarget "TRITableModelTests" */ = {
 			isa = XCConfigurationList;
@@ -424,6 +437,7 @@
 				5B0E66431A6D187D00B64B6E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
