@@ -473,6 +473,13 @@
 }
 
 
+- (void)observeValueForKeyPath:(__unused NSString *)keyPath ofObject:(NSObject *)object change:(__unused NSDictionary *)change context:(void*)context {
+    if (context == [TRISortedArray observationContext]) {
+        [self sortObject:object];
+    }
+}
+
+
 
 
 
