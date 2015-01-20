@@ -257,14 +257,20 @@
 
 
 - (void)removeObject:(NSObject *)object TRI_PUBLIC_API {
-    NSUInteger index = [self.backing indexOfObject:object];
-    [self removeObjectAtIndex:index];
+    NSMutableArray *backing = self.backing;
+    NSUInteger index = NSNotFound;
+    while ((index = [backing indexOfObject:object]) != NSNotFound) {
+        [self removeObjectAtIndex:index];
+    }
 }
 
 
 - (void)removeObjectIdenticalTo:(NSObject *)object TRI_PUBLIC_API {
-    NSUInteger index = [self.backing indexOfObjectIdenticalTo:object];
-    [self removeObjectAtIndex:index];
+    NSMutableArray *backing = self.backing;
+    NSUInteger index = NSNotFound;
+    while ((index = [backing indexOfObjectIdenticalTo:object]) != NSNotFound) {
+        [self removeObjectAtIndex:index];
+    }
 }
 
 
