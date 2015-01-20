@@ -158,10 +158,10 @@
 }
 
 
-- (BOOL)isEqualTo:(id)other TRI_PUBLIC_API {
+- (BOOL)isEqual:(NSObject *)other TRI_PUBLIC_API {
     if (self == other) return YES;
     if ( ! [other isKindOfClass:[NSArray class]]) return NO;
-    return [self.backing isEqualToArray:other];
+    return [self.backing isEqualToArray:(NSArray *)other];
 }
 
 
