@@ -32,6 +32,7 @@
 
 @property (readonly) NSHashTable *observers;
 @property (readonly) NSMapTable *subscriptions;
+@property NSInteger mutations;
 
 
 - (instancetype)initWithCoder:(NSCoder *)decoder NS_DESIGNATED_INITIALIZER;
@@ -416,11 +417,15 @@
 
 
 
-#pragma mark - Observations: Managing
+#pragma mark -
+#pragma mark Observations: Managing
 
 
 - (void)addObserver:(NSObject<TRISortedArrayObserver> *)observer TRI_PUBLIC_API {
     [self.observers addObject:observer];
+    if (self.mutations > 0) {
+        //TODO: Report begin changes
+    }
 }
 
 
@@ -441,6 +446,45 @@
 
 - (void)removeSubscriber:(NSObject *)subscriber TRI_PUBLIC_API {
     [self.subscriptions removeObjectForKey:subscriber];
+}
+
+
+
+
+
+#pragma mark Observations: Reporting
+
+
+- (void)performChanges:(void (^)(void))block TRI_PUBLIC_API {
+    [self beginChanges];
+    block();
+    [self endChanges];
+}
+
+
+- (void)beginChanges {
+    NSInteger mutations = self.mutations;
+    BOOL wasMutating = (mutations > 0);
+    mutations ++;
+    BOOL isMutating = (mutations > 0);
+    self.mutations = mutations;
+    
+    if ( ! wasMutating && isMutating) {
+        //TODO: Report begin changes.
+    }
+}
+
+
+- (void)endChanges {
+    NSInteger mutations = self.mutations;
+    BOOL wasMutating = (mutations > 0);
+    mutations --;
+    BOOL isMutating = (mutations > 0);
+    self.mutations = mutations;
+    
+    if (wasMutating && ! isMutating) {
+        //TODO: Report end changes.
+    }
 }
 
 

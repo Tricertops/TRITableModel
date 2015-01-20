@@ -95,6 +95,8 @@
 - (void)addSubscriber:(id)subscriber block:(TRISortedArraySubscribtionBlock)block;
 - (void)removeSubscriber:(id)subscriber;
 
+- (void)performChanges:(void (^)(void))block;
+
 
 
 @end
