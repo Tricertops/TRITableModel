@@ -30,6 +30,9 @@
 @property BOOL isAutonomous;
 @property (copy) NSSet *observedKeyPaths;
 
+@property (readonly) NSHashTable *observers;
+@property (readonly) NSMapTable *subscriptions;
+
 
 - (instancetype)initWithCoder:(NSCoder *)decoder NS_DESIGNATED_INITIALIZER;
 
@@ -55,8 +58,10 @@
 - (instancetype)initWithCapacity:(NSUInteger)capacity TRI_PUBLIC_API {
     self = [super init];
     if (self) {
-        self->_sortDescriptors = [NSArray new];
         self->_backing = [NSMutableArray arrayWithCapacity:capacity];
+        self->_sortDescriptors = [NSArray new];
+        self->_observers = [NSHashTable weakObjectsHashTable];
+        self->_subscriptions = [NSMapTable weakToStrongObjectsMapTable];
     }
     return self;
 }
@@ -81,8 +86,8 @@
 - (instancetype)initWithArray:(NSArray *)array sortDescriptor:(NSArray *)sortDescriptors TRI_PUBLIC_API {
     self = [self initWithBacking:[NSMutableArray arrayWithArray:array]];
     if (self) {
-        // Sort.
-        self.sortDescriptors = sortDescriptors;
+        self->_sortDescriptors = sortDescriptors;
+        [self sortDescriptorsChanged];
     }
     return self;
 }
@@ -106,10 +111,18 @@
 - (instancetype)initWithCoder:(NSCoder *)decoder {
     self = [super initWithCoder:decoder];
     if (self) {
-        self->_sortDescriptors = [decoder decodeObjectOfClass:[NSArray class] forKey:@"TRI.sortDescriptors"];
-        [self->_sortDescriptors makeObjectsPerformSelector:@selector(allowEvaluation)];
+        self->_backing = [decoder decodeObjectOfClass:[NSMutableArray class] forKey:@"TRI.objects"] ?: [NSMutableArray new];
         
-        self->_backing = [decoder decodeObjectOfClass:[NSMutableArray class] forKey:@"TRI.objects"];
+        NSArray *sortDescriptors = [decoder decodeObjectOfClass:[NSArray class] forKey:@"TRI.sortDescriptors"];
+        self->_allowsConcurrentSorting = [decoder decodeBoolForKey:@"TRI.allowsConcurrent"];
+        self->_insertsEqualObjectsFirst = [decoder decodeBoolForKey:@"TRI.equalFirst"];
+        
+        self->_observers = [decoder decodeObjectOfClass:[NSHashTable class] forKey:@"TRI.observers"] ?: [NSHashTable weakObjectsHashTable];
+        self->_subscriptions = [NSMapTable weakToStrongObjectsMapTable];
+        
+        [sortDescriptors makeObjectsPerformSelector:@selector(allowEvaluation)];
+        self->_sortDescriptors = sortDescriptors; // Setter is needed.
+        [self sortDescriptorsChanged];
     }
     return self;
 }
@@ -117,8 +130,12 @@
 
 - (void)encodeWithCoder:(NSCoder *)encoder {
     [super encodeWithCoder:encoder];
-    [encoder encodeObject:self.sortDescriptors forKey:@"TRI.sortDescriptors"];
     [encoder encodeObject:self.backing forKey:@"TRI.objects"];
+    [encoder encodeObject:self.sortDescriptors forKey:@"TRI.sortDescriptors"];
+    [encoder encodeBool:self.allowsConcurrentSorting forKey:@"TRI.allowsConcurrent"];
+    [encoder encodeBool:self.insertsEqualObjectsFirst forKey:@"TRI.equalFirst"];
+    [encoder encodeObject:self.observers forKey:@"TRI.observers"]; //TEST: Encodes conditionally.
+    // .subscribers uses block so no encoding.
 }
 
 
@@ -279,9 +296,13 @@
 
 
 - (void)setSortDescriptors:(NSArray *)sortDescriptors TRI_PUBLIC_API {
-    sortDescriptors = [sortDescriptors copy];
-    self->_sortDescriptors = sortDescriptors;
-    
+    self->_sortDescriptors = [sortDescriptors copy];
+    [self sortDescriptorsChanged];
+}
+
+
+- (void)sortDescriptorsChanged {
+    NSArray *sortDescriptors = self.sortDescriptors;
     if (sortDescriptors.count > 0) {
         NSUInteger missingKeyPaths = NSUIntegerMax;
         NSSet *keyPaths = [self keyPathsFromSortDescriptors:sortDescriptors countMissing:&missingKeyPaths];
