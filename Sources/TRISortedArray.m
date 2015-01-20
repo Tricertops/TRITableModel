@@ -409,6 +409,7 @@
             [keyPaths addObject:descriptor.key];
         }
     }
+    [keyPaths removeObject:@"self"];
     return keyPaths;
 }
 
