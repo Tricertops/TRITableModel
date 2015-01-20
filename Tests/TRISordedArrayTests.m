@@ -139,6 +139,29 @@
 
 
 
+#pragma mark -
+#pragma mark Equality
+
+
+- (void)test_EqualToImmutable {
+    NSArray *sortedFirstNames = [self.firstNames sortedArrayUsingDescriptors:@[self.sortAscending]];
+    TRISortedArray *array = [TRISortedArray arrayWithArray:sortedFirstNames];
+    XCTAssertTrue([array isEqualTo:sortedFirstNames]);
+    XCTAssertTrue([array isEqualToArray:sortedFirstNames]);
+}
+
+
+- (void)test_EqualToSorted {
+    NSArray *sortedFirstNames = [self.firstNames sortedArrayUsingDescriptors:@[self.sortAscending]];
+    TRISortedArray *array = [TRISortedArray arrayWithArray:sortedFirstNames];
+    TRISortedArray *copy = [array sortedCopy];
+    XCTAssertTrue([array isEqualToSortedArray:copy]);
+}
+
+
+
+
+
 
 
 
