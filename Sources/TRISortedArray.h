@@ -62,18 +62,8 @@
 #pragma mark - Sorting Objects
 
 @property (copy) NSArray *sortDescriptors;
-@property (readonly) BOOL isAutonomous;
-@property (readonly, copy) NSSet *observedKeyPaths;
 //TODO: @property BOOL isDescending;
 @property BOOL allowsConcurrentSorting;
-
-- (void)sortAllObjects;
-- (void)sortObject:(id)object;
-- (void)sortObjectIdenticalTo:(id)object;
-- (void)sortObjectAtIndex:(NSUInteger)index;
-- (void)sortObjectAtIndexes:(NSIndexSet *)indexes;
-- (void)sortObjectsInRange:(NSRange)range;
-- (void)sortObjectsInCollection:(id<NSFastEnumeration>)collection;
 
 
 #pragma mark - Copying

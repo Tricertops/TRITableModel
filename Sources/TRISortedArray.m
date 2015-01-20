@@ -27,7 +27,6 @@
 @property (readonly) NSMutableArray *backing;
 
 @property (copy) NSComparator combinedComparator;
-@property BOOL isAutonomous;
 @property (copy) NSSet *observedKeyPaths;
 
 @property (readonly) NSHashTable *observers;
@@ -220,9 +219,10 @@
 
 - (void)setObjects:(NSArray *)array {
     [self beginChanges];
-    //TODO: Report replacement
+    [self reportWillReplaceContent];
     [self.backing setArray:array];
-    [self sortAllObjects];
+    [self sort];
+    [self reportDidReplaceContent];
     [self endChanges];
 }
 
@@ -243,7 +243,6 @@
 
 - (void)removeAllObjects TRI_PUBLIC_API {
     [self beginChanges];
-    //TODO: Report replacement
     [self reportWillReplaceContent];
     [self.backing removeAllObjects];
     [self reportDidReplaceContent];
@@ -350,12 +349,7 @@
 - (void)sortDescriptorsChanged {
     NSArray *sortDescriptors = self.sortDescriptors;
     if (sortDescriptors.count > 0) {
-        NSUInteger missingKeyPaths = NSUIntegerMax;
-        NSSet *keyPaths = [self keyPathsFromSortDescriptors:sortDescriptors countMissing:&missingKeyPaths];
-        self.isAutonomous = (missingKeyPaths == 0);
-        if ( ! self.isAutonomous) {
-            NSLog(@"<%@ %p> is NOT autonomous and cannot fully resort itself based on KVO, use NSSortDescriptors with defined `key` to allow autonomous resorting.", self.class, self);
-        }
+        NSSet *keyPaths = [self keyPathsFromSortDescriptors:sortDescriptors];
         self.observedKeyPaths = keyPaths;
         //TODO: Observe key-paths
         
@@ -367,110 +361,51 @@
             }
             return NSOrderedSame;
         }];
-        [self sortAllObjects];
+        [self reportWillReplaceContent];
+        [self sort];
+        [self reportDidReplaceContent];
     }
     else {
         self.combinedComparator = nil;
-        self.isAutonomous = NO;
         self.observedKeyPaths = nil;
         //TODO: Un-observe key-paths
     }
 }
 
 
-- (NSSet *)keyPathsFromSortDescriptors:(NSArray *)sortDescriptors countMissing:(out NSUInteger *)missingCountRef {
+- (NSSet *)keyPathsFromSortDescriptors:(NSArray *)sortDescriptors {
     NSMutableSet *keyPaths = [NSMutableSet setWithCapacity:sortDescriptors.count];
-    NSUInteger missing = 0;
     for (NSSortDescriptor *descriptor in sortDescriptors) {
         if (descriptor.key) {
             [keyPaths addObject:descriptor.key];
         }
-        else {
-            missing ++;
-        }
-    }
-    if (missingCountRef) {
-        *missingCountRef = missing;
     }
     return keyPaths;
 }
 
 
-- (void)sortAllObjects TRI_PUBLIC_API {
+- (void)sort {
     NSComparator comparator = self.combinedComparator;
     if (comparator) {
         NSSortOptions options = NSSortStable;
         if (self.allowsConcurrentSorting) {
             options |= NSSortConcurrent;
         }
-        [self beginChanges];
-        //TODO: Report replacement
         [self.backing sortWithOptions:options usingComparator:comparator];
-        [self endChanges];
     }
 }
 
 
-- (void)sortObject:(NSObject *)object TRI_PUBLIC_API {
-    if ([self.backing containsObject:object]) {
-        [self beginChanges];
-        [self removeObject:object];
-        [self addObject:object];
-        [self endChanges];
-    }
-}
 
-
-- (void)sortObjectIdenticalTo:(id)object TRI_PUBLIC_API {
-    if ([self.backing indexOfObjectIdenticalTo:object] != NSNotFound) {
-        [self beginChanges];
-        [self removeObjectIdenticalTo:object];
-        [self addObject:object];
-        [self endChanges];
-    }
-}
-
-
-- (void)sortObjectAtIndex:(NSUInteger)index TRI_PUBLIC_API {
-    id object = [self.backing objectAtIndex:index];
-    [self beginChanges];
-    [self removeObjectAtIndex:index];
-    [self addObject:object];
-    [self endChanges];
-}
-
-
-- (void)sortObjectAtIndexes:(NSIndexSet *)indexes TRI_PUBLIC_API {
-    NSArray *objects = [self.backing objectsAtIndexes:indexes];
-    [self beginChanges];
-    [self removeObjectsAtIndexes:indexes];
-    [self addObjectsFromCollection:objects];
-    [self endChanges];
-}
-
-
-- (void)sortObjectsInRange:(NSRange)range TRI_PUBLIC_API {
-    NSArray *objects = [self.backing subarrayWithRange:range];
-    [self beginChanges];
-    [self removeObjectsInRange:range];
-    [self addObjectsFromCollection:objects];
-    [self endChanges];
-}
-
-
-- (void)sortObjectsInCollection:(NSObject<NSFastEnumeration> *)collection TRI_PUBLIC_API {
+- (void)sortObject:(NSObject *)object {
     NSMutableArray *backing = self.backing;
-    // Find only those that are actually contained.
-    NSMutableArray *subcollection = [NSMutableArray new];
-    for (NSObject *object in collection) {
-        if ([backing containsObject:object]) {
-            [subcollection addObject:object];
-        }
-    }
+    NSUInteger sourceIndex = [backing indexOfObjectIdenticalTo:object];
     [self beginChanges];
-    [self removeObjectsInCollection:subcollection];
-    [self addObjectsFromCollection:subcollection];
-    [self endChanges];
+    [backing removeObjectAtIndex:sourceIndex];
+    NSUInteger destinationIndex = [self proposedIndexOfObject:object];
+    [backing insertObject:object atIndex:destinationIndex];
+    [self reportDidMoveObject:object fromIndex:sourceIndex toIndex:destinationIndex];
+    [self beginChanges];
 }
 
 
@@ -584,7 +519,7 @@
 }
 
 
-- (void)reportDidMoveObject:(NSObject *)object fromIndex:(NSUInteger)sourceIndex toInted:(NSUInteger)destinationIndex {
+- (void)reportDidMoveObject:(NSObject *)object fromIndex:(NSUInteger)sourceIndex toIndex:(NSUInteger)destinationIndex {
     
 }
 
