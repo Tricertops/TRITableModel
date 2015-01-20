@@ -182,16 +182,20 @@
 
 - (void)addObject:(NSObject *)object TRI_PUBLIC_API {
     NSUInteger index = [self proposedIndexOfObject:object];
+    [self beginChanges];
     [self.backing insertObject:object atIndex:index];
+    [self endChanges];
 }
 
 
 - (void)addObjectsFromCollection:(NSObject<NSFastEnumeration> *)collection TRI_PUBLIC_API {
     NSMutableArray *backing = self.backing;
+    [self beginChanges];
     for (NSObject *object in collection) {
         NSUInteger index = [self proposedIndexOfObject:object];
         [backing insertObject:object atIndex:index];
     }
+    [self endChanges];
 }
 
 
@@ -219,39 +223,53 @@
 
 
 - (void)removeAllObjects TRI_PUBLIC_API {
+    [self beginChanges];
     [self.backing removeAllObjects];
+    [self endChanges];
 }
 
 
 - (void)removeObject:(NSObject *)object TRI_PUBLIC_API {
+    [self beginChanges];
     [self.backing removeObject:object];
+    [self endChanges];
 }
 
 
 - (void)removeObjectIdenticalTo:(NSObject *)object TRI_PUBLIC_API {
+    [self beginChanges];
     [self.backing removeObjectIdenticalTo:object];
+    [self endChanges];
 }
 
 
 - (void)removeObjectAtIndex:(NSUInteger)index TRI_PUBLIC_API {
+    [self beginChanges];
     [self.backing removeObjectAtIndex:index];
+    [self endChanges];
 }
 
 
 - (void)removeObjectsAtIndexes:(NSIndexSet *)indexes TRI_PUBLIC_API {
+    [self beginChanges];
     [self.backing removeObjectsAtIndexes:indexes];
+    [self endChanges];
 }
 
 - (void)removeObjectsInRange:(NSRange)range TRI_PUBLIC_API {
+    [self beginChanges];
     [self.backing removeObjectsInRange:range];
+    [self endChanges];
 }
 
 
 - (void)removeObjectsInCollection:(NSObject<NSFastEnumeration> *)collection TRI_PUBLIC_API {
     NSMutableArray *backing = self.backing;
+    [self beginChanges];
     for (NSObject *object in collection) {
         [backing removeObject:object];
     }
+    [self endChanges];
 }
 
 
@@ -262,19 +280,23 @@
 
 
 - (void)filterUsingPredicate:(NSPredicate *)predicate TRI_PUBLIC_API {
+    [self beginChanges];
     [self.backing filterUsingPredicate:predicate];
+    [self endChanges];
 }
 
 
 - (void)filterUsingBlock:(BOOL (^)(id, NSUInteger))shouldKeep TRI_PUBLIC_API {
     NSUInteger index = 0;
     NSMutableArray *backing = self.backing;
+    [self beginChanges];
     for (NSObject *object in [backing copy]) {
         if ( ! shouldKeep(object, index)) {
             [backing removeObjectAtIndex:index];
         }
         index ++;
     }
+    [self endChanges];
 }
 
 
@@ -358,45 +380,57 @@
         if (self.allowsConcurrentSorting) {
             options |= NSSortConcurrent;
         }
+        [self beginChanges];
         [self.backing sortWithOptions:options usingComparator:comparator];
+        [self endChanges];
     }
 }
 
 
 - (void)sortObject:(NSObject *)object TRI_PUBLIC_API {
     if ([self.backing containsObject:object]) {
+        [self beginChanges];
         [self removeObject:object];
         [self addObject:object];
+        [self endChanges];
     }
 }
 
 
 - (void)sortObjectIdenticalTo:(id)object TRI_PUBLIC_API {
     if ([self.backing indexOfObjectIdenticalTo:object] != NSNotFound) {
+        [self beginChanges];
         [self removeObjectIdenticalTo:object];
         [self addObject:object];
+        [self endChanges];
     }
 }
 
 
 - (void)sortObjectAtIndex:(NSUInteger)index TRI_PUBLIC_API {
     id object = [self.backing objectAtIndex:index];
+    [self beginChanges];
     [self removeObjectAtIndex:index];
     [self addObject:object];
+    [self endChanges];
 }
 
 
 - (void)sortObjectAtIndexes:(NSIndexSet *)indexes TRI_PUBLIC_API {
     NSArray *objects = [self.backing objectsAtIndexes:indexes];
+    [self beginChanges];
     [self removeObjectsAtIndexes:indexes];
     [self addObjectsFromCollection:objects];
+    [self endChanges];
 }
 
 
 - (void)sortObjectsInRange:(NSRange)range TRI_PUBLIC_API {
     NSArray *objects = [self.backing subarrayWithRange:range];
+    [self beginChanges];
     [self removeObjectsInRange:range];
     [self addObjectsFromCollection:objects];
+    [self endChanges];
 }
 
 
@@ -409,8 +443,10 @@
             [subcollection addObject:object];
         }
     }
+    [self beginChanges];
     [self removeObjectsInCollection:subcollection];
     [self addObjectsFromCollection:subcollection];
+    [self endChanges];
 }
 
 
