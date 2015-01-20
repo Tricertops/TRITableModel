@@ -416,6 +416,37 @@
 
 
 
+#pragma mark - Observations: Managing
+
+
+- (void)addObserver:(NSObject<TRISortedArrayObserver> *)observer TRI_PUBLIC_API {
+    [self.observers addObject:observer];
+}
+
+
+- (void)removeObserver:(NSObject<TRISortedArrayObserver> *)observer TRI_PUBLIC_API {
+    [self.observers removeObject:observer];
+}
+
+
+- (void)addSubscriber:(NSObject *)subscriber block:(TRISortedArraySubscribtionBlock)block TRI_PUBLIC_API {
+    NSMutableArray *subscriptions = [self.subscriptions objectForKey:subscriber];
+    if ( ! subscriptions) {
+        subscriptions = [NSMutableArray new];
+        [self.subscriptions setObject:subscriptions forKey:subscriber];
+    }
+    [subscriptions addObject:block];
+}
+
+
+- (void)removeSubscriber:(NSObject *)subscriber TRI_PUBLIC_API {
+    [self.subscriptions removeObjectForKey:subscriber];
+}
+
+
+
+
+
 #pragma mark -
 
 
