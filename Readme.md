@@ -32,7 +32,7 @@ All methods available on `NSArray` work on `TRISortedArray` too, so you have no 
 
 There are two ways to react on changes to the array order:
 
-  - **Observer** implementing protocol – Your object can implement provided `TRISortedArrayObserver` protocol (fully or partially) and register itself by calling `-addObserver:` on the array. This object is notified about every single change (insertion/removal/move). This is suitable to be used with `UITableView`.
+  - **Observer** implementing protocol – Your object can implement provided `TRISortedArrayObserver` protocol (fully or partially) and register itself by calling `-addObserver:` on the array. This object is notified about every single change (insertion/removal/move), which is suitable to be used with `UITableView`.
   - Subscription **Block** – You can register a block to be invoked whenever the array contents changes in some way. This block does not know what exactly changed and in what way.
 
 Changes to the content are coalesced into _groups_. For example, adding 3 objects from other array by calling `-addObjectsFromCollection:` will report following:
@@ -58,7 +58,7 @@ MYPerson *smith = [MYPerson first:@"Adam" last:@"Smith"];
 MYPerson *jones = [MYPerson first:@"Bob" last:@"Jones"];
 MYPerson *taylor = [MYPerson first:@"Clark" last:@"Taylor"];
 
-[array addObjectsFromCollection:@[taylor, smith, jones]]; // Adam Smith, Bob Jones, Clark Taylor
+[array setObjects:@[taylor, smith, jones]]; // Adam Smith, Bob Jones, Clark Taylor
 
 smith.firstName = @"Daniel"; // Bob Jones, Clark Taylor, Daniel Smith
 taylor.firstName = @"Eve"; // Bob Jones, Daniel Smith, Eve Taylor
