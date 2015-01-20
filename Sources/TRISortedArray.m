@@ -184,6 +184,7 @@
     NSUInteger index = [self proposedIndexOfObject:object];
     [self beginChanges];
     [self.backing insertObject:object atIndex:index];
+    [self reportDidInsertObject:object atIndex:index];
     [self endChanges];
 }
 
@@ -194,6 +195,7 @@
     for (NSObject *object in collection) {
         NSUInteger index = [self proposedIndexOfObject:object];
         [backing insertObject:object atIndex:index];
+        [self reportDidInsertObject:object atIndex:index];
     }
     [self endChanges];
 }
@@ -218,6 +220,7 @@
 
 - (void)setObjects:(NSArray *)array {
     [self beginChanges];
+    //TODO: Report replacement
     [self.backing setArray:array];
     [self sortAllObjects];
     [self endChanges];
@@ -230,52 +233,62 @@
 #pragma mark Mutations: Removing
 
 
+- (void)removeObject:(NSObject *)object atIndex:(NSUInteger)index TRI_PUBLIC_API {
+    [self beginChanges];
+    [self.backing removeObjectAtIndex:index];
+    [self reportDidDeleteObject:object fromIndex:index];
+    [self endChanges];
+}
+
+
 - (void)removeAllObjects TRI_PUBLIC_API {
     [self beginChanges];
+    //TODO: Report replacement
+    [self reportWillReplaceContent];
     [self.backing removeAllObjects];
+    [self reportDidReplaceContent];
     [self endChanges];
 }
 
 
 - (void)removeObject:(NSObject *)object TRI_PUBLIC_API {
-    [self beginChanges];
-    [self.backing removeObject:object];
-    [self endChanges];
+    NSUInteger index = [self.backing indexOfObject:object];
+    [self removeObjectAtIndex:index];
 }
 
 
 - (void)removeObjectIdenticalTo:(NSObject *)object TRI_PUBLIC_API {
-    [self beginChanges];
-    [self.backing removeObjectIdenticalTo:object];
-    [self endChanges];
+    NSUInteger index = [self.backing indexOfObjectIdenticalTo:object];
+    [self removeObjectAtIndex:index];
 }
 
 
 - (void)removeObjectAtIndex:(NSUInteger)index TRI_PUBLIC_API {
-    [self beginChanges];
-    [self.backing removeObjectAtIndex:index];
-    [self endChanges];
+    if (index != NSNotFound) {
+        NSObject *object = [self.backing objectAtIndex:index];
+        [self removeObject:object atIndex:index];
+    }
 }
 
 
 - (void)removeObjectsAtIndexes:(NSIndexSet *)indexes TRI_PUBLIC_API {
     [self beginChanges];
-    [self.backing removeObjectsAtIndexes:indexes];
+    [indexes enumerateIndexesUsingBlock:^(NSUInteger index, __unused BOOL *stop) {
+        [self removeObjectAtIndex:index];
+    }];
     [self endChanges];
 }
 
 - (void)removeObjectsInRange:(NSRange)range TRI_PUBLIC_API {
-    [self beginChanges];
-    [self.backing removeObjectsInRange:range];
-    [self endChanges];
+    NSIndexSet *indexes = [NSIndexSet indexSetWithIndexesInRange:range];
+    [self removeObjectsAtIndexes:indexes];
 }
 
 
 - (void)removeObjectsInCollection:(NSObject<NSFastEnumeration> *)collection TRI_PUBLIC_API {
-    NSMutableArray *backing = self.backing;
     [self beginChanges];
     for (NSObject *object in collection) {
-        [backing removeObject:object];
+        [self removeObject:object];
     }
     [self endChanges];
 }
@@ -288,9 +301,9 @@
 
 
 - (void)filterUsingPredicate:(NSPredicate *)predicate TRI_PUBLIC_API {
-    [self beginChanges];
-    [self.backing filterUsingPredicate:predicate];
-    [self endChanges];
+    [self filterUsingBlock:^BOOL(id object, NSUInteger index) {
+        return [predicate evaluateWithObject:object substitutionVariables:@{ @"index": @(index) }];
+    }];
 }
 
 
@@ -300,9 +313,11 @@
     [self beginChanges];
     for (NSObject *object in [backing copy]) {
         if ( ! shouldKeep(object, index)) {
-            [backing removeObjectAtIndex:index];
+            [self removeObject:object atIndex:index];
         }
-        index ++;
+        else {
+            index ++;
+        }
     }
     [self endChanges];
 }
@@ -389,6 +404,7 @@
             options |= NSSortConcurrent;
         }
         [self beginChanges];
+        //TODO: Report replacement
         [self.backing sortWithOptions:options usingComparator:comparator];
         [self endChanges];
     }
@@ -496,7 +512,7 @@
 
 
 
-#pragma mark Observations: Reporting
+#pragma mark Observations: Grouping
 
 
 - (void)performChanges:(void (^)(void))block TRI_PUBLIC_API {
@@ -514,7 +530,7 @@
     self.mutations = mutations;
     
     if ( ! wasMutating && isMutating) {
-        //TODO: Report begin changes.
+        [self reportWillBeginChanges];
     }
 }
 
@@ -527,8 +543,49 @@
     self.mutations = mutations;
     
     if (wasMutating && ! isMutating) {
-        //TODO: Report end changes.
+        [self reportDidEndChanges];
     }
+}
+
+
+
+
+
+#pragma mark Observations: Reporting
+
+
+- (void)reportWillBeginChanges {
+    
+}
+
+
+- (void)reportDidEndChanges {
+    
+}
+
+
+- (void)reportWillReplaceContent {
+    
+}
+
+
+- (void)reportDidReplaceContent {
+    
+}
+
+
+- (void)reportDidInsertObject:(NSObject *)object atIndex:(NSUInteger)index {
+    
+}
+
+
+- (void)reportDidDeleteObject:(NSObject *)object fromIndex:(NSUInteger)index {
+    
+}
+
+
+- (void)reportDidMoveObject:(NSObject *)object fromIndex:(NSUInteger)sourceIndex toInted:(NSUInteger)destinationIndex {
+    
 }
 
 
