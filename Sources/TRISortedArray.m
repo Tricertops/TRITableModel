@@ -181,10 +181,9 @@
 
 - (void)addObject:(NSObject *)object TRI_PUBLIC_API {
     NSUInteger index = [self proposedIndexOfObject:object];
-    [self beginChanges];
+    [self reportWillInsertObject:object atIndex:index];
     [self.backing insertObject:object atIndex:index];
     [self reportDidInsertObject:object atIndex:index];
-    [self endChanges];
 }
 
 
@@ -193,6 +192,7 @@
     [self beginChanges];
     for (NSObject *object in collection) {
         NSUInteger index = [self proposedIndexOfObject:object];
+        [self reportWillInsertObject:object atIndex:index];
         [backing insertObject:object atIndex:index];
         [self reportDidInsertObject:object atIndex:index];
     }
@@ -218,12 +218,10 @@
 
 
 - (void)setObjects:(NSArray *)array {
-    [self beginChanges];
     [self reportWillReplaceContent];
     [self.backing setArray:array];
     [self sort];
     [self reportDidReplaceContent];
-    [self endChanges];
 }
 
 
@@ -234,19 +232,16 @@
 
 
 - (void)removeObject:(NSObject *)object atIndex:(NSUInteger)index TRI_PUBLIC_API {
-    [self beginChanges];
+    [self reportWillDeleteObject:object fromIndex:index];
     [self.backing removeObjectAtIndex:index];
     [self reportDidDeleteObject:object fromIndex:index];
-    [self endChanges];
 }
 
 
 - (void)removeAllObjects TRI_PUBLIC_API {
-    [self beginChanges];
     [self reportWillReplaceContent];
     [self.backing removeAllObjects];
     [self reportDidReplaceContent];
-    [self endChanges];
 }
 
 
@@ -361,9 +356,9 @@
             }
             return NSOrderedSame;
         }];
-        [self reportWillReplaceContent];
+        [self reportWillSort];
         [self sort];
-        [self reportDidReplaceContent];
+        [self reportDidSort];
     }
     else {
         self.combinedComparator = nil;
@@ -400,12 +395,12 @@
 - (void)sortObject:(NSObject *)object {
     NSMutableArray *backing = self.backing;
     NSUInteger sourceIndex = [backing indexOfObjectIdenticalTo:object];
-    [self beginChanges];
+    
+    [self reportWillMoveObject:object fromIndex:sourceIndex];
     [backing removeObjectAtIndex:sourceIndex];
     NSUInteger destinationIndex = [self proposedIndexOfObject:object];
     [backing insertObject:object atIndex:destinationIndex];
     [self reportDidMoveObject:object fromIndex:sourceIndex toIndex:destinationIndex];
-    [self beginChanges];
 }
 
 
@@ -509,13 +504,33 @@
 }
 
 
+- (void)reportWillSort {
+}
+
+
+- (void)reportDidSort {
+}
+
+
+- (void)reportWillInsertObject:(NSObject *)object atIndex:(NSUInteger)index {
+}
+
+
 - (void)reportDidInsertObject:(NSObject *)object atIndex:(NSUInteger)index {
     
 }
 
 
+- (void)reportWillDeleteObject:(NSObject *)object fromIndex:(NSUInteger)index {
+}
+
+
 - (void)reportDidDeleteObject:(NSObject *)object fromIndex:(NSUInteger)index {
     
+}
+
+
+- (void)reportWillMoveObject:(NSObject *)object fromIndex:(NSUInteger)sourceIndex {
 }
 
 
