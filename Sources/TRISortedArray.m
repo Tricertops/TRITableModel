@@ -13,6 +13,7 @@
 
 
 #define TRI_PUBLIC_API
+#define TRIDebug(FORMAT...)     NSLog(FORMAT)
 
 
 
@@ -475,6 +476,7 @@
 
 - (void)observeValueForKeyPath:(__unused NSString *)keyPath ofObject:(NSObject *)object change:(__unused NSDictionary *)change context:(void*)context {
     if (context == [TRISortedArray observationContext]) {
+        TRIDebug(@"<%@ %p> observed change of \"%@\" on object: %@", self.class, self, keyPath, object);
         [self sortObject:object];
     }
 }
@@ -597,6 +599,7 @@
 
 
 - (void)reportDidReplaceContent {
+    TRIDebug(@"<%@ %p> replaced content %tu objects", self.class, self, self.backing.count);
     for (NSObject<TRISortedArrayObserver> *observer in self.observers) {
         if ([observer respondsToSelector:@selector(sortedArrayDidReplaceContent:)]) {
             [observer sortedArrayDidReplaceContent:self];
@@ -617,6 +620,7 @@
 
 
 - (void)reportDidSort {
+    TRIDebug(@"<%@ %p> sorted", self.class, self);
     for (NSObject<TRISortedArrayObserver> *observer in self.observers) {
         if ([observer respondsToSelector:@selector(sortedArrayDidSort:)]) {
             [observer sortedArrayDidSort:self];
@@ -637,6 +641,7 @@
 
 
 - (void)reportDidInsertObject:(NSObject *)object atIndex:(NSUInteger)index {
+    TRIDebug(@"<%@ %p> inserted at %tu object: %@", self.class, self, index, object);
     for (NSObject<TRISortedArrayObserver> *observer in self.observers) {
         if ([observer respondsToSelector:@selector(sortedArray:didInsertObject:atIndex:)]) {
             [observer sortedArray:self didInsertObject:object atIndex:index];
@@ -657,6 +662,7 @@
 
 
 - (void)reportDidRemoveObject:(NSObject *)object fromIndex:(NSUInteger)index {
+    TRIDebug(@"<%@ %p> removed from %tu object: %@", self.class, self, index, object);
     for (NSObject<TRISortedArrayObserver> *observer in self.observers) {
         if ([observer respondsToSelector:@selector(sortedArray:didRemoveObject:fromIndex:)]) {
             [observer sortedArray:self didRemoveObject:object fromIndex:index];
@@ -677,6 +683,7 @@
 
 
 - (void)reportDidMoveObject:(NSObject *)object fromIndex:(NSUInteger)sourceIndex toIndex:(NSUInteger)destinationIndex {
+    TRIDebug(@"<%@ %p> move from %tu to %tu object: %@", self.class, self, sourceIndex, destinationIndex, object);
     for (NSObject<TRISortedArrayObserver> *observer in self.observers) {
         if ([observer respondsToSelector:@selector(sortedArray:didMoveObject:fromIndex:toIndex:)]) {
             [observer sortedArray:self didMoveObject:object fromIndex:sourceIndex toIndex:destinationIndex];
